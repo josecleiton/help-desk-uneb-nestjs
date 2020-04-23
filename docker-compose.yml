@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+  postgres:
+    container_name: hdu-postgres
+    image: postgres:12-alpine
+    expose:
+      - "${DB_PORT}"
+    volumes:
+      - "hdu-volume:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - hdu-network
+    restart: unless-stopped
+
+  pg-admin:
+    container_name: hdu-pg-admin
+    image: dpage/pgadmin4:4.10
+    ports:
+      - "${PGADMIN_LISTEN_PORT}:${PGADMIN_REVERSE_EXPOSE_PORT}"
+    volumes:
+      - "hdu-volume:/var/lib/pgadmin"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_LISTEN_PORT: ${PGADMIN_LISTEN_PORT}
+    depends_on:
+      - postgres
+    networks:
+      - hdu-network
+    restart: unless-stopped
+
+  hdu:
+    container_name: hdu-api
+    build:
+      context: .
+      dockerfile: Dockerfile-local
+    ports:
+      - "${PORT_EXPOSED}:${PORT}"
+    volumes:
+      - "./:/hdu-volume/app"
+    depends_on:
+      - postgres
+    networks:
+      - hdu-network
+    restart: unless-stopped
+
+  redis:
+    container_name: hdu-redis
+    image: redis:alpine
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    expose:
+      - "${REDIS_PORT}"
+    volumes:
+      - "hdu-volume:/var/lib/redis"
+    depends_on:
+      - hdu
+    networks:
+      - hdu-network
+    restart: unless-stopped
+
+networks:
+  hdu-network:
+    driver: bridge
+
+volumes:
+  hdu-volume:
+    driver: "local"
