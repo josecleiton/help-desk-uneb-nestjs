@@ -8,6 +8,7 @@ import {
   ValidationPipe,
   Put,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { SetorService } from './setor.service';
 import { Setor } from './setor.entity';
@@ -16,6 +17,7 @@ import { Manager } from '../auth/manager.model';
 import { CreateSetorDto } from './dto/create-setor.dto';
 import { Admin } from '../auth/admin.model';
 import { UpdateSetorDto } from './dto/update-setor.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('setor')
 export class SetorController {
@@ -26,6 +28,7 @@ export class SetorController {
     return this.setorService.getSetors();
   }
 
+  @UseGuards(AuthGuard())
   @Get('/:id')
   getSetorById(
     @Param('id', ParseIntPipe) id: number,
@@ -34,6 +37,7 @@ export class SetorController {
     return this.setorService.getSetorById(id, manager);
   }
 
+  @UseGuards(AuthGuard())
   @Post()
   createSetor(
     @Body(ValidationPipe) createSetorDto: CreateSetorDto,
@@ -42,6 +46,7 @@ export class SetorController {
     return this.setorService.createSetor(createSetorDto, admin);
   }
 
+  @UseGuards(AuthGuard())
   @Put('/:id')
   updateSetor(
     @Param('id', ParseIntPipe) id: number,
@@ -51,6 +56,7 @@ export class SetorController {
     return this.setorService.updateSetor(id, updateSetorDto, admin);
   }
 
+  @UseGuards(AuthGuard())
   @Delete('/:id')
   deleteSetor(
     @Param('id', ParseIntPipe) id: number,

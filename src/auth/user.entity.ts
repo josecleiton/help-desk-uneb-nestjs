@@ -3,7 +3,6 @@ import {
   BaseEntity,
   Column,
   PrimaryGeneratedColumn,
-  Unique,
   ManyToOne,
 } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
@@ -11,19 +10,18 @@ import { UserRoles } from './user-roles.enum';
 import { Setor } from '../setor/setor.entity';
 
 @Entity()
-@Unique(['username', 'email'])
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
   @Column()
   nome: string;
-  @Column()
+  @Column({ unique: true })
   username: string;
-  @Column()
+  @Column({ unique: true })
   email: string;
   @Column()
   password: string;
-  @Column()
+  @Column({ nullable: true })
   telefone: string;
   @Column()
   cargo: UserRoles;

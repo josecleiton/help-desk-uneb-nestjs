@@ -92,7 +92,7 @@ describe('SetorService', () => {
     };
     repository.createSetor.mockResolvedValue(value);
     expect(repository.createSetor).not.toBeCalled();
-    const result = await service.createSetor(mockDto);
+    const result = await service.createSetor(mockDto, mockUser);
     expect(repository.createSetor).toBeCalledWith(mockDto);
     expect(result).toEqual(value);
   });

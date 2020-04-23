@@ -19,7 +19,7 @@ export const GetManager = createParamDecorator(
   (data: unknown, ctx: ExecutionContext): Manager => {
     const req = ctx.switchToHttp().getRequest();
     const user: User = req.user;
-    if (!(user.cargo === UserRoles.Manager || user.cargo === UserRoles.Admin)) {
+    if (!user.isManager()) {
       throw new UnauthorizedException();
     }
     return user as Manager;
@@ -30,7 +30,7 @@ export const GetAdmin = createParamDecorator(
   (data: unknown, ctx: ExecutionContext): Admin => {
     const req = ctx.switchToHttp().getRequest();
     const user: User = req.user;
-    if (user.cargo !== UserRoles.Admin) {
+    if (!user.isAdmin()) {
       throw new UnauthorizedException();
     }
     return user as Admin;

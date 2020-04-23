@@ -2,23 +2,33 @@ import { EntityRepository, Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { User } from './user.entity';
 import { SignUpDto } from './dto/signup.dto';
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, Logger } from '@nestjs/common';
 import { SignInDto } from './dto/signin.dto';
+import { typeOrmCodeErrors } from '../app.constants';
+import { Setor } from '../setor/setor.entity';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
-  async signUp(signUpDto: SignUpDto): Promise<void> {
-    const { username, password, nome} = signUpDto;
+  private logger = new Logger('UserRepository');
+
+  async signUp(signUpDto: SignUpDto, setor: Setor = null): Promise<void> {
+    const { password } = signUpDto;
     const user = this.create();
-    user.username = username;
+    Object.assign(user, signUpDto);
+    user.setor = setor;
     user.password = await this.hashPassword(password);
-    user.nome = nome;
     try {
       await user.save();
     } catch (err) {
-      if (err.code === '23505') {
-        // duplicate username
-        throw new ConflictException('username already exists');
+      if (err.code === typeOrmCodeErrors.uniqueConstraint) {
+        const { detail } = err;
+        const key = detail.substring(
+          detail.indexOf('(') + 1,
+          detail.indexOf(')'),
+        );
+        throw new ConflictException(`${key} already exists`);
+      } else {
+        this.logger.error(err);
       }
       throw err;
     }
