@@ -1,9 +1,14 @@
-import { IsString, IsOptional, MinLength } from 'class-validator';
-import { searchQueryParamMinLength } from '../problema.constants';
+import { IsString, IsOptional, IsNotEmpty } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class GetProblemasDto {
   @IsOptional()
   @IsString()
-  @MinLength(searchQueryParamMinLength)
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'String de busca por Problemas',
+    type: String,
+    minLength: 1,
+  })
   search: string;
 }

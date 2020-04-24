@@ -1,16 +1,18 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+
+import { SetorService } from '../setor/setor.service';
 import { ProblemaRepository } from './problema.repository';
-import { GetProblemasDto } from './dto/get-problemas.dto';
 import { Problema } from './problema.entity';
-import { Manager } from 'src/auth/manager.model';
+import { Manager } from '../auth/manager.model';
 import { CreateProblemaDto } from './dto/create-problema.dto';
-import { SetorService } from 'src/setor/setor.service';
+import { GetProblemasDto } from './dto/get-problemas.dto';
 import { UpdateProblemaDto } from './dto/update-problema.dto';
 
 @Injectable()
 export class ProblemaService {
   private logger = new Logger('ProblemaService');
+
   constructor(
     @InjectRepository(ProblemaRepository)
     private problemaRepository: ProblemaRepository,
@@ -27,7 +29,7 @@ export class ProblemaService {
     return this.problemaRepository.getProblemas(setorId, getProblemasDto);
   }
 
-  async getById(
+  async getProblemaById(
     id: number,
     setorId: number,
     manager: Manager,
@@ -65,7 +67,7 @@ export class ProblemaService {
     manager: Manager,
     updateProblemaDto: UpdateProblemaDto,
   ): Promise<Problema> {
-    const problema = await this.getById(id, setorId, manager);
+    const problema = await this.getProblemaById(id, setorId, manager);
     Object.assign(problema, updateProblemaDto);
     await problema.save();
     this.logger.log(
@@ -81,8 +83,9 @@ export class ProblemaService {
     setorId: number,
     manager: Manager,
   ): Promise<void> {
-    const problema = await this.getById(id, setorId, manager);
+    const problema = await this.getProblemaById(id, setorId, manager);
     const result = await this.problemaRepository.delete(problema.id);
+    console.log(problema);
     if (!result.affected) {
       this.logger.warn(
         `Problema #${id} tentou ser excluído por ${manager.username}`,

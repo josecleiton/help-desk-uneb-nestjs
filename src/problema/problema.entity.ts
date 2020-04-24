@@ -5,7 +5,7 @@ import {
   ManyToOne,
   Entity,
 } from 'typeorm';
-import { Setor } from 'src/setor/setor.entity';
+import { Setor } from '../setor/setor.entity';
 
 @Entity()
 export class Problema extends BaseEntity {

@@ -2,7 +2,7 @@ import { Repository, EntityRepository } from 'typeorm';
 import { Problema } from './problema.entity';
 import { GetProblemasDto } from './dto/get-problemas.dto';
 import { CreateProblemaDto } from './dto/create-problema.dto';
-import { Setor } from 'src/setor/setor.entity';
+import { Setor } from '../setor/setor.entity';
 
 @EntityRepository(Problema)
 export class ProblemaRepository extends Repository<Problema> {

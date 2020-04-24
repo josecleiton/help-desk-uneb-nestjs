@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProblemaService } from './problema.service';
 import { ProblemaController } from './problema.controller';
 import { ProblemaRepository } from './problema.repository';
-import { AuthModule } from 'src/auth/auth.module';
-import { SetorModule } from 'src/setor/setor.module';
+import { AuthModule } from '../auth/auth.module';
+import { SetorModule } from '../setor/setor.module';
 
 @Module({
   imports: [

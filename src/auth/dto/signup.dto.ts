@@ -11,15 +11,16 @@ import { SignInDto } from './signin.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { nomeMinLength, nomeMaxLength } from '../user.constants';
 import { UserRoles } from '../user-roles.enum';
-import { telefoneMinLength, emailMinLength } from 'src/setor/setor.constants';
+import { telefoneMinLength, emailMinLength } from '../../setor/setor.constants';
 
 export class SignUpDto extends SignInDto {
   @IsString()
   @MinLength(nomeMinLength)
   @MaxLength(nomeMaxLength)
   @ApiProperty({
-    minimum: nomeMinLength,
-    maximum: nomeMaxLength,
+    description: 'Nome do Usuário',
+    minLength: nomeMinLength,
+    maxLength: nomeMaxLength,
     type: String,
   })
   nome: string;
@@ -27,7 +28,8 @@ export class SignUpDto extends SignInDto {
   @IsEmail()
   @MinLength(emailMinLength)
   @ApiProperty({
-    minimum: emailMinLength,
+    description: 'Email do Usuário',
+    minLength: emailMinLength,
     type: String,
   })
   email: string;
@@ -36,19 +38,24 @@ export class SignUpDto extends SignInDto {
   @IsString()
   @MinLength(telefoneMinLength)
   @ApiProperty({
-    minimum: telefoneMinLength,
+    description: 'Telefone do Usuário',
+    minLength: telefoneMinLength,
     type: String,
   })
   telefone: string;
 
   @IsEnum(UserRoles)
   @ApiProperty({
+    description: 'Cargo do Usuário',
     enum: UserRoles,
     type: String,
   })
   cargo: UserRoles;
 
   @IsNumber()
-  @ApiProperty({ type: Number })
+  @ApiProperty({
+    description: 'Setor ao qual o Usuário pertence',
+    type: Number,
+  })
   setorId: number;
 }

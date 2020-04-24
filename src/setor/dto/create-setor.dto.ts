@@ -11,7 +11,7 @@ export class CreateSetorDto {
   @MinLength(nomeMinLength)
   @ApiProperty({
     description: 'Nome do Setor',
-    minimum: nomeMinLength,
+    minLength: nomeMinLength,
     type: String,
   })
   nome: string;
@@ -20,7 +20,7 @@ export class CreateSetorDto {
   @MinLength(telefoneMinLength)
   @ApiProperty({
     description: 'Telefone do Setor',
-    minimum: telefoneMinLength,
+    minLength: telefoneMinLength,
     type: String,
   })
   telefone: string;
@@ -29,7 +29,7 @@ export class CreateSetorDto {
   @MinLength(emailMinLength)
   @ApiProperty({
     description: 'Email do Setor',
-    minimum: emailMinLength,
+    minLength: emailMinLength,
     type: String,
   })
   email: string;

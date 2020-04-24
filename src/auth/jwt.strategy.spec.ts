@@ -20,8 +20,8 @@ describe('JwtStrategy', () => {
         { provide: UserRepository, useFactory: mockUserRepository },
       ],
     }).compile();
-    jwtStrategy = await module.get<JwtStrategy>(JwtStrategy);
-    userRepository = await module.get<UserRepository>(UserRepository);
+    jwtStrategy = module.get<JwtStrategy>(JwtStrategy);
+    userRepository = module.get<UserRepository>(UserRepository);
   });
 
   describe('validate', () => {

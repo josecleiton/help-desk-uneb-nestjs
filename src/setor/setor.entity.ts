@@ -7,7 +7,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { User } from '../auth/user.entity';
-import { Problema } from 'src/problema/problema.entity';
+import { Problema } from '../problema/problema.entity';
 
 @Entity()
 @Unique(['email'])
