@@ -85,7 +85,6 @@ export class ProblemaService {
   ): Promise<void> {
     const problema = await this.getProblemaById(id, setorId, manager);
     const result = await this.problemaRepository.delete(problema.id);
-    console.log(problema);
     if (!result.affected) {
       this.logger.warn(
         `Problema #${id} tentou ser excluído por ${manager.username}`,

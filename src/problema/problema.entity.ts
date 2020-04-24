@@ -13,6 +13,8 @@ export class Problema extends BaseEntity {
   id: number;
   @Column({ type: 'text' })
   descricao: string;
+  @Column()
+  setorId: number;
 
   @ManyToOne(
     () => Setor,

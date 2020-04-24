@@ -30,6 +30,7 @@ export class ProblemaRepository extends Repository<Problema> {
     problema.descricao = descricao;
     problema.setor = setor;
     await problema.save();
+    delete problema.setor;
     return problema;
   }
 }
