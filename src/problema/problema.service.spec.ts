@@ -117,7 +117,6 @@ describe('ProblemaService', () => {
       beforeEach(() => {
         expect(setor.problemas).toBeDefined();
         setor.problemas.push(problema);
-        console.log(setor);
       });
       it('succesfully delete problema', async () => {
         const mockDeletedResult = { affected: 1 };

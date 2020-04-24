@@ -9,6 +9,7 @@ import {
   Body,
   Put,
   Delete,
+  ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ProblemaService } from './problema.service';
@@ -26,7 +27,7 @@ export class ProblemaController {
   @Get()
   getAll(
     @Param('setor_id', ParseIntPipe) setorId: number,
-    @Query() getProblemasDto: GetProblemasDto,
+    @Query(ValidationPipe) getProblemasDto: GetProblemasDto,
   ): Promise<Problema[]> {
     return this.problemaService.getProblemas(setorId, getProblemasDto);
   }
@@ -35,7 +36,7 @@ export class ProblemaController {
   @Post()
   create(
     @Param('setor_id', ParseIntPipe) setorId: number,
-    @Body() createProblemaDto: CreateProblemaDto,
+    @Body(ValidationPipe) createProblemaDto: CreateProblemaDto,
     @GetManager() manager: Manager,
   ): Promise<Problema> {
     return this.problemaService.createProblema(
@@ -50,7 +51,7 @@ export class ProblemaController {
   update(
     @Param('setor_id', ParseIntPipe) setorId: number,
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateProblemaDto: UpdateProblemaDto,
+    @Body(ValidationPipe) updateProblemaDto: UpdateProblemaDto,
     @GetManager() manager: Manager,
   ): Promise<Problema> {
     return this.problemaService.updateProblema(

@@ -25,6 +25,8 @@ export class User extends BaseEntity {
   telefone: string;
   @Column()
   cargo: UserRoles;
+  @Column({ nullable: true })
+  setorId: number;
 
   @ManyToOne(
     () => Setor,
