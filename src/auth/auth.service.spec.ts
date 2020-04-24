@@ -54,6 +54,8 @@ describe('AuthService', () => {
   it('should be defined', () => {
     expect(authService).toBeDefined();
     expect(userRepository).toBeDefined();
+    expect(setorService).toBeDefined();
+    expect(jwtService).toBeDefined();
   });
 
   it('signup', async () => {

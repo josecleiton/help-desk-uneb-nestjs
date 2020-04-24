@@ -6,10 +6,9 @@ import {
 import * as bcrypt from 'bcryptjs';
 
 import { UserRepository } from './user.repository';
-import { SignUpDto } from './dto/signup.dto';
 import { User } from './user.entity';
 
-const mockCredentials: SignUpDto = {
+const mockCredentials = {
   username: 'test',
   password: 'testpassword',
   nome: 'Test Name',
@@ -22,7 +21,7 @@ describe('UserRepository', () => {
     const module = await Test.createTestingModule({
       providers: [UserRepository],
     }).compile();
-    userRepository = await module.get<UserRepository>(UserRepository);
+    userRepository = module.get<UserRepository>(UserRepository);
   });
 
   describe('signUp', () => {
@@ -32,21 +31,21 @@ describe('UserRepository', () => {
       userRepository.create = jest.fn().mockReturnValue({ save });
     });
 
-    it('successfully signsup', () => {
+    it('successfully signup', () => {
       save.mockResolvedValue(null);
       expect(userRepository.signUp(mockCredentials)).resolves.not.toThrow();
     });
 
     it('throws a conflict exception because username already exists', () => {
-      save.mockRejectedValue({ code: '23505' });
-      expect(userRepository.signUp(mockCredentials)).resolves.toThrow(
+      save.mockRejectedValue({ code: '23505', detail: 'Key(username)' });
+      expect(userRepository.signUp(mockCredentials)).rejects.toThrow(
         ConflictException,
       );
     });
 
     it('throws a internal server error exception because username already exists', () => {
       save.mockRejectedValue({ code: '13505' });
-      expect(userRepository.signUp(mockCredentials)).resolves.toThrow(
+      expect(userRepository.signUp(mockCredentials)).rejects.toThrow(
         InternalServerErrorException,
       );
     });

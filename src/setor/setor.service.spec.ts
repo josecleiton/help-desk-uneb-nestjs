@@ -125,6 +125,7 @@ describe('SetorService', () => {
 
     it('throws 404 because no rows was affected', () => {
       value = { affected: 0 };
+      repository.delete.mockResolvedValue(value);
       expect(repository.delete).not.toBeCalled();
       expect(service.deleteSetor(id, mockUser)).rejects.toThrow(
         NotFoundException,
