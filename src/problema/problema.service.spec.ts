@@ -7,6 +7,7 @@ import { NotFoundException } from '@nestjs/common';
 const mockProblemaRepository = () => ({
   getProblemas: jest.fn(),
   delete: jest.fn(),
+  createProblema: jest.fn(),
 });
 const mockSetorService = () => ({
   getSetorById: jest.fn(),
@@ -51,27 +52,47 @@ describe('ProblemaService', () => {
     expect(result).toEqual(value);
   });
 
-  describe('getProblemaById', () => {
+  describe('getSetor', () => {
     let setor;
     beforeEach(() => {
       setor = { problemas: [] };
       setorService.getSetorById.mockResolvedValue(setor);
     });
 
-    it('succesfully return problema', async () => {
-      const problema = { id: value };
-      expect(setor.problemas).toBeDefined();
-      setor.problemas.push(problema);
-      const result = await problemaService.getProblemaById(value, 1, mockUser);
-      expect(setorService.getSetorById).toBeCalled();
-      expect(result).toEqual(problema);
-    });
-
-    it('throws 404 as problema not found', () => {
-      expect(problemaService.getProblemaById(1, 1, mockUser)).rejects.toThrow(
-        NotFoundException,
+    it('createProblema', async () => {
+      const mockProblema = 'testProblema';
+      const mockDto = {};
+      problemaRepository.createProblema.mockResolvedValue(mockProblema);
+      const result = await problemaService.createProblema(
+        value,
+        mockUser,
+        mockDto,
       );
       expect(setorService.getSetorById).toBeCalled();
+      expect(problemaRepository.createProblema).toBeCalled();
+      expect(result).toBe(mockProblema);
+    });
+
+    describe('getProblemaById', () => {
+      it('succesfully return problema', async () => {
+        const problema = { id: value };
+        expect(setor.problemas).toBeDefined();
+        setor.problemas.push(problema);
+        const result = await problemaService.getProblemaById(
+          value,
+          1,
+          mockUser,
+        );
+        expect(setorService.getSetorById).toBeCalled();
+        expect(result).toEqual(problema);
+      });
+
+      it('throws 404 as problema not found', () => {
+        expect(problemaService.getProblemaById(1, 1, mockUser)).rejects.toThrow(
+          NotFoundException,
+        );
+        expect(setorService.getSetorById).toBeCalled();
+      });
     });
 
     it('updateProblema', async () => {
@@ -114,7 +135,6 @@ describe('ProblemaService', () => {
           problemaService.deleteProblema(value, 1, mockUser),
         ).rejects.toThrow(NotFoundException);
         expect(setorService.getSetorById).toBeCalled();
-        expect(problemaRepository.delete).toBeCalledWith(problema.id);
       });
     });
   });

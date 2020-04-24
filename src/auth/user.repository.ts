@@ -26,9 +26,10 @@ export class UserRepository extends Repository<User> {
     } catch (err) {
       if (err.code === typeOrmCodeErrors.uniqueConstraint) {
         const { detail } = err;
-        const key = detail
-          ? detail.substring(detail.indexOf('(') + 1, detail.indexOf(')'))
-          : 'key';
+        const key = detail.substring(
+          detail.indexOf('(') + 1,
+          detail.indexOf(')'),
+        );
         throw new ConflictException(`${key} already exists`);
       } else {
         this.logger.error(err);

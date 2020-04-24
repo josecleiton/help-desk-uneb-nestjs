@@ -37,7 +37,7 @@ describe('UserRepository', () => {
     });
 
     it('throws a conflict exception because username already exists', () => {
-      save.mockRejectedValue({ code: '23505' });
+      save.mockRejectedValue({ code: '23505', detail: 'Key(username)' });
       expect(userRepository.signUp(mockCredentials)).rejects.toThrow(
         ConflictException,
       );
