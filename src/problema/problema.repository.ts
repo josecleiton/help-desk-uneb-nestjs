@@ -1,6 +1,8 @@
 import { Repository, EntityRepository } from 'typeorm';
 import { Problema } from './problema.entity';
 import { GetProblemasDto } from './dto/get-problemas.dto';
+import { CreateProblemaDto } from './dto/create-problema.dto';
+import { Setor } from 'src/setor/setor.entity';
 
 @EntityRepository(Problema)
 export class ProblemaRepository extends Repository<Problema> {
@@ -17,5 +19,17 @@ export class ProblemaRepository extends Repository<Problema> {
       });
     }
     return query.getMany();
+  }
+
+  async createProblema(
+    setor: Setor,
+    createProblemaDto: CreateProblemaDto,
+  ): Promise<Problema> {
+    const { descricao } = createProblemaDto;
+    const problema = this.create();
+    problema.descricao = descricao;
+    problema.setor = setor;
+    await problema.save();
+    return problema;
   }
 }

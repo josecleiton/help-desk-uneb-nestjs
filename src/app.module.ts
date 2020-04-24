@@ -6,6 +6,11 @@ import { dbConfig } from './config/database.config';
 import { ProblemaModule } from './problema/problema.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(dbConfig), AuthModule, SetorModule, ProblemaModule],
+  imports: [
+    TypeOrmModule.forRoot(dbConfig),
+    AuthModule,
+    SetorModule,
+    ProblemaModule,
+  ],
 })
 export class AppModule {}
