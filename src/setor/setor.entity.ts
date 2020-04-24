@@ -7,6 +7,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { User } from '../auth/user.entity';
+import { Problema } from 'src/problema/problema.entity';
 
 @Entity()
 @Unique(['email'])
@@ -26,4 +27,11 @@ export class Setor extends BaseEntity {
     { eager: false },
   )
   users: User[];
+
+  @OneToMany(
+    () => Problema,
+    problema => problema.setor,
+    { eager: true },
+  )
+  problemas: Problema[];
 }
