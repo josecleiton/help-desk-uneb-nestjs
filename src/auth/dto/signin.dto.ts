@@ -11,8 +11,9 @@ export class SignInDto {
   @MinLength(usernameMinLength)
   @MaxLength(usernameMaxLength)
   @ApiProperty({
-    minimum: usernameMinLength,
-    maximum: usernameMaxLength,
+    description: 'Login do Usuário',
+    minLength: usernameMinLength,
+    maxLength: usernameMaxLength,
     type: String,
   })
   username: string;
@@ -20,7 +21,8 @@ export class SignInDto {
   @IsString()
   @MinLength(passwordMinLength)
   @ApiProperty({
-    minimum: passwordMinLength,
+    description: 'Senha do Usuário',
+    minLength: passwordMinLength,
     type: String,
   })
   password: string;

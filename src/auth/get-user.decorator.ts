@@ -4,7 +4,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { User } from './user.entity';
-import { UserRoles } from './user-roles.enum';
 import { Manager } from './manager.model';
 import { Admin } from './admin.model';
 
