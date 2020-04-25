@@ -4,10 +4,13 @@ import {
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { UserRoles } from './user-roles.enum';
 import { Setor } from '../setor/setor.entity';
+import { Chamado } from '../chamado/chamado.entity';
+import { Alteracao } from '../chamado/alteracao/alteracao.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -27,6 +30,17 @@ export class User extends BaseEntity {
   cargo: UserRoles;
   @Column({ nullable: true })
   setorId: number;
+
+  @OneToMany(
+    () => Chamado,
+    chamado => chamado.user,
+  )
+  chamados: Chamado[];
+  @OneToMany(
+    () => Alteracao,
+    alteracao => alteracao.user,
+  )
+  alteracoes: Alteracao[];
 
   @ManyToOne(
     () => Setor,

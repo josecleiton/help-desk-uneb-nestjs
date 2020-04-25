@@ -1,22 +1,21 @@
 import {
-  MaxLength,
   MinLength,
   IsString,
   IsEnum,
   IsOptional,
   IsEmail,
   IsNumber,
+  Length,
 } from 'class-validator';
 import { SignInDto } from './signin.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { nomeMinLength, nomeMaxLength } from '../user.constants';
 import { UserRoles } from '../user-roles.enum';
-import { telefoneMinLength, emailMinLength } from '../../setor/setor.constants';
+import { telefoneMinLength, emailMinLength } from '../../app.constants';
 
 export class SignUpDto extends SignInDto {
   @IsString()
-  @MinLength(nomeMinLength)
-  @MaxLength(nomeMaxLength)
+  @Length(nomeMinLength, nomeMaxLength)
   @ApiProperty({
     description: 'Nome do Usuário',
     minLength: nomeMinLength,

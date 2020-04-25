@@ -15,8 +15,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { ProblemaService } from './problema.service';
 import { Problema } from './problema.entity';
 import { GetProblemasDto } from './dto/get-problemas.dto';
-import { GetManager } from '../auth/get-user.decorator';
-import { Manager } from '../auth/manager.model';
+import { GetManager } from '../../auth/get-user.decorator';
+import { Manager } from '../../auth/manager.model';
 import { CreateProblemaDto } from './dto/create-problema.dto';
 import { UpdateProblemaDto } from './dto/update-problema.dto';
 
