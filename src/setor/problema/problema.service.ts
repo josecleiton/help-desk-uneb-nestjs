@@ -1,10 +1,10 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { SetorService } from '../setor/setor.service';
+import { SetorService } from '../setor.service';
 import { ProblemaRepository } from './problema.repository';
 import { Problema } from './problema.entity';
-import { Manager } from '../auth/manager.model';
+import { Manager } from '../../auth/manager.model';
 import { CreateProblemaDto } from './dto/create-problema.dto';
 import { GetProblemasDto } from './dto/get-problemas.dto';
 import { UpdateProblemaDto } from './dto/update-problema.dto';

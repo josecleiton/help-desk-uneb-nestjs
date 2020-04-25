@@ -1,4 +1,11 @@
-import { BaseEntity, Column, PrimaryGeneratedColumn, Entity } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  PrimaryGeneratedColumn,
+  Entity,
+  OneToMany,
+} from 'typeorm';
+import { Chamado } from '../chamado/chamado.entity';
 
 @Entity()
 export class Solicitante extends BaseEntity {
@@ -8,6 +15,13 @@ export class Solicitante extends BaseEntity {
   cpf: string;
   @Column({ unique: true })
   email: string;
-  @Column()
+  @Column({ nullable: true })
   telefone?: string;
+
+  @OneToMany(
+    () => Chamado,
+    chamado => chamado.solicitante,
+    { eager: true },
+  )
+  chamados: Chamado[];
 }

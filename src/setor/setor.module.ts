@@ -4,11 +4,13 @@ import { SetorController } from './setor.controller';
 import { SetorService } from './setor.service';
 import { SetorRepository } from './setor.repository';
 import { AuthModule } from '../auth/auth.module';
+import { ProblemaModule } from './problema/problema.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([SetorRepository]),
+    ProblemaModule,
     forwardRef(() => AuthModule),
+    TypeOrmModule.forFeature([SetorRepository]),
   ],
   controllers: [SetorController],
   providers: [SetorService],

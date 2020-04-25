@@ -1,4 +1,4 @@
-import { MaxLength, MinLength, IsString } from 'class-validator';
+import { MinLength, IsString, Length } from 'class-validator';
 import {
   usernameMinLength,
   usernameMaxLength,
@@ -8,8 +8,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class SignInDto {
   @IsString()
-  @MinLength(usernameMinLength)
-  @MaxLength(usernameMaxLength)
+  @Length(usernameMinLength, usernameMaxLength)
   @ApiProperty({
     description: 'Login do Usuário',
     minLength: usernameMinLength,

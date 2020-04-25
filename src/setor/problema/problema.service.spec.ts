@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProblemaService } from './problema.service';
 import { ProblemaRepository } from './problema.repository';
-import { SetorService } from '../setor/setor.service';
+import { SetorService } from '../setor.service';
 import { NotFoundException } from '@nestjs/common';
 
 const mockProblemaRepository = () => ({

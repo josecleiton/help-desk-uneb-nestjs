@@ -4,8 +4,10 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   Entity,
+  OneToMany,
 } from 'typeorm';
-import { Setor } from '../setor/setor.entity';
+import { Setor } from '../setor.entity';
+import { Chamado } from '../../chamado/chamado.entity';
 
 @Entity()
 export class Problema extends BaseEntity {
@@ -22,4 +24,10 @@ export class Problema extends BaseEntity {
     { eager: false },
   )
   setor: Setor;
+
+  @OneToMany(
+    () => Chamado,
+    chamado => chamado.problema,
+  )
+  chamados: Chamado[];
 }

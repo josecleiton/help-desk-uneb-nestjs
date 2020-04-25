@@ -6,6 +6,7 @@ import { Manager } from '../auth/manager.model';
 import { Admin } from '../auth/admin.model';
 import { CreateSetorDto } from './dto/create-setor.dto';
 import { UpdateSetorDto } from './dto/update-setor.dto';
+import { QueryRunnerTransaction } from '../database-util/query-runner.factory';
 
 @Injectable()
 export class SetorService {
@@ -28,6 +29,26 @@ export class SetorService {
         `O usuário ${manager.username} tentou acessar o setor #${id}`,
       );
       throw new NotFoundException(`Setor #${id} não encontrado.`);
+    }
+    return setor;
+  }
+
+  /**
+   * Select Setor without manager
+   * @param id  setor id
+   * @param transaction trx
+   */
+  async getSetorByID(
+    id: number,
+    transaction?: QueryRunnerTransaction,
+  ): Promise<Setor> {
+    const setor = transaction
+      ? await transaction.manager.findOne(Setor, id)
+      : await this.setorRepository.findOne(id);
+    if (!setor) {
+      const msg = `Setor #${id} não encontrado`;
+      this.logger.warn(msg);
+      throw new NotFoundException(msg);
     }
     return setor;
   }
