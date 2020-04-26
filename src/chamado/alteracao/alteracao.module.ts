@@ -5,7 +5,7 @@ import { AlteracaoRepository } from './alteracao.repository';
 import { EmailModule } from '../../email/email.module';
 
 @Module({
-  imports: [EmailModule, TypeOrmModule.forFeature([AlteracaoRepository])],
+  imports: [TypeOrmModule.forFeature([AlteracaoRepository]), EmailModule],
   providers: [AlteracaoService],
   exports: [AlteracaoService],
 })

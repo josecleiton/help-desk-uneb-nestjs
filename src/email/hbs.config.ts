@@ -1,6 +1,6 @@
-
 import * as hbs from 'handlebars';
 import { hbsHelpers } from './email.constants';
+
 hbs.registerHelper(hbsHelpers.color, function(): string {
   return `"color: ${this.color};"`;
 });

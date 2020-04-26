@@ -13,13 +13,13 @@ import { UtilModule } from '../util/util.module';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([ChamadoRepository, ChamadoTIRepository]),
     SolicitanteModule,
     AlteracaoModule,
     UtilModule,
     SetorModule,
     AuthModule,
     EmailModule,
-    TypeOrmModule.forFeature([ChamadoRepository, ChamadoTIRepository]),
   ],
   providers: [ChamadoService],
   controllers: [ChamadoController],

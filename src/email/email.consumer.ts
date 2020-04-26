@@ -45,11 +45,19 @@ export class EmailConsumer {
     const { data } = job;
     const html = this.compileTemplate(job.data);
     if (!html) {
-      const msg = `O conteúdo em HTML é requirido. Talvez o caminho esteja incorreto.`;
+      const msg =
+        'O conteúdo em HTML é requirido. Talvez o caminho esteja incorreto.';
       this.logger.error(msg);
       throw new Error(msg);
     }
     const text = this.compileTemplate(data, true);
+    if (!text) {
+      this.logger.warn(
+        `TemplateView ${data.view} sem a versão text plain
+         Toda TemplateView deve ter sua versão em texto.
+         Porque isso evita que o email caia em spam`,
+      );
+    }
     const { person, subject } = data;
     const info = await this.transporter.sendMail({
       from: emailFrom,
