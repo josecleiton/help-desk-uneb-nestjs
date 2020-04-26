@@ -1,3 +1,6 @@
+import hbs from './hbs.config';
+import * as path from 'path';
+import * as nodemailer from 'nodemailer';
 import {
   Processor,
   Process,
@@ -7,22 +10,10 @@ import {
 import { Job } from 'bull';
 import { readFileSync } from 'fs';
 import { Logger } from '@nestjs/common';
-import * as hbs from 'handlebars';
-import * as path from 'path';
-import * as nodemailer from 'nodemailer';
 
 import { emailQueueConfig } from './email.queue.config';
 import { EmailJob } from './email-job.interface.dto';
 import { emailConfig, emailFrom } from '../config/email.config';
-import { hbsHelpers } from './email.constants';
-
-hbs.registerHelper(hbsHelpers.color, function(): string {
-  return `"color: ${this.color};"`;
-});
-
-hbs.registerHelper(hbsHelpers.upperCase, function(v: string): string {
-  return v.toUpperCase();
-});
 
 @Processor(emailQueueConfig.name)
 export class EmailConsumer {
