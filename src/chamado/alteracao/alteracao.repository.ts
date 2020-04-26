@@ -29,6 +29,7 @@ export class AlteracaoRepository extends Repository<Alteracao> {
     Object.assign(alteracao, createAlteracaoDto);
     alteracao.chamado = chamado;
     alteracao.user = user;
+    alteracao.data = new Date();
     if (transaction) {
       await transaction.manager.save(alteracao);
     } else {

@@ -10,6 +10,8 @@ import {
   Put,
   SerializeOptions,
   Delete,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { ApiHeader } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -23,8 +25,10 @@ import { solicitanteAuthHeaderSwagger } from '../solicitante/solicitante.constan
 import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../auth/user.entity';
 import { CreateAlteracaoDto } from './alteracao/dto/create-alteracao.dto';
+import { AlteracaoStatus } from './alteracao/alteracao.status';
 
 @Controller('chamado')
+@UseInterceptors(ClassSerializerInterceptor)
 export class ChamadoController {
   constructor(private chamadoService: ChamadoService) {}
 
@@ -53,18 +57,16 @@ export class ChamadoController {
   }
 
   @Put(':id/situacao')
-  @ApiHeader(solicitanteAuthHeaderSwagger)
   @UseGuards(AuthGuard())
   updateSituacao(
     @Param('id', ParseIntPipe) id: number,
     @GetUser() user: User,
     @Body(ValidationPipe) createAlteracaoDto: CreateAlteracaoDto,
-  ): Promise<Chamado> {
-    return this.chamadoService.updateChamadoSituacao(
-      id,
-      createAlteracaoDto,
-      user,
-    );
+  ) {
+    const { situacao } = createAlteracaoDto;
+    return situacao !== AlteracaoStatus.TRANSFERIDO
+      ? this.chamadoService.updateChamadoSituacao(id, createAlteracaoDto, user)
+      : this.chamadoService.tranferChamado(id, createAlteracaoDto, user);
   }
 
   @Delete(':id')

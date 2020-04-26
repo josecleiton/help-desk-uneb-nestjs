@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AlteracaoRepository } from './alteracao.repository';
 import { Alteracao } from './alteracao.entity';
@@ -32,6 +32,9 @@ export class AlteracaoService {
         chamado.id
       } criada.` + userLog,
     );
+    if (user && user.setorId !== chamado.setorId && !user.isAdmin()) {
+      throw new ForbiddenException('Usuário de outro Setor');
+    }
     const alteracao = await this.alteracaoRepository.createAlteracao(
       createAlteracaoDto,
       chamado,

@@ -3,6 +3,8 @@ import {
   NotFoundException,
   Logger,
   InternalServerErrorException,
+  BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chamado } from './chamado.entity';
@@ -10,7 +12,10 @@ import { CreateChamadoDto } from './dto/create-chamado.dto';
 import { Solicitante } from '../solicitante/solicitante.entity';
 import { ChamadoRepository } from './chamado.repository';
 import { ChamadoTIRepository } from './chamado-ti.repository';
-import { QueryRunnerFactory } from '../util/query-runner.factory';
+import {
+  QueryRunnerFactory,
+  QueryRunnerTransaction,
+} from '../util/query-runner.factory';
 import { SolicitanteService } from '../solicitante/solicitante.service';
 import { SetorService } from '../setor/setor.service';
 import { Problema } from '../setor/problema/problema.entity';
@@ -19,6 +24,8 @@ import { alteracaoDescriptionDefault } from './alteracao/alteracao.constant';
 import { AlteracaoStatus } from './alteracao/alteracao.status';
 import { User } from '../auth/user.entity';
 import { CreateAlteracaoDto } from './alteracao/dto/create-alteracao.dto';
+import { AlteracaoPriority } from './alteracao/alteracao-priority.enum';
+import { Setor } from 'src/setor/setor.entity';
 
 @Injectable()
 export class ChamadoService {
@@ -76,8 +83,8 @@ export class ChamadoService {
       const alteracao = await this.alteracaoService.createAlteracao(
         {
           descricao: alteracaoDescriptionDefault,
-          data: new Date(),
           situacao: AlteracaoStatus.ABERTO,
+          prioridade: AlteracaoPriority.MEDIA,
         },
         chamado,
         null,
@@ -99,22 +106,33 @@ export class ChamadoService {
     }
   }
 
+  private notFoundMsg(id: number) {
+    return `Chamado #${id} não encontrado.`;
+  }
+
   async getChamadoById(id: number, solicitante: Solicitante): Promise<Chamado> {
     const chamado = await this.chamadoRepository.findOne({
       where: { id, solicitanteId: solicitante.id },
     });
     if (!chamado) {
-      const msg = `Chamado #${id} não encontrado`;
+      const msg = this.notFoundMsg(id);
       this.logger.warn(msg);
       throw new NotFoundException(msg);
     }
     return chamado;
   }
 
-  private async getById(id: number): Promise<Chamado> {
-    const chamado = await this.chamadoRepository.findOne(id);
+  private async getById(
+    id: number,
+    transaction?: QueryRunnerTransaction,
+  ): Promise<Chamado> {
+    const chamado = transaction
+      ? await transaction.manager.findOne(Chamado, id)
+      : await this.chamadoRepository.findOne(id);
     if (!chamado) {
-      throw new NotFoundException(`Chamado #${id} não encontrado.`);
+      const msg = this.notFoundMsg(id);
+      this.logger.log(msg);
+      throw new NotFoundException(msg);
     }
     return chamado;
   }
@@ -137,13 +155,88 @@ export class ChamadoService {
     return chamado;
   }
 
+  private async getSetorAndUser(
+    setorId: number,
+    userId: number,
+    transaction: QueryRunnerTransaction,
+  ): Promise<{ setor: Setor; user: User }> {
+    let setor: Setor;
+    let user: User = null;
+    if (!setorId) {
+      user = await transaction.manager.findOne(User, userId);
+      setor = await this.setorService.getSetorByID(user.setorId, transaction);
+    } else {
+      setor = await this.setorService.getSetorByID(setorId, transaction);
+    }
+    return { setor, user };
+  }
+
+  async tranferChamado(
+    id: number,
+    createAlteracaoDto: CreateAlteracaoDto,
+    user: User,
+  ): Promise<Chamado> {
+    const { transferido } = createAlteracaoDto;
+    if (!transferido) {
+      throw new BadRequestException(
+        'O objeto transferido na requisição é requirido',
+      );
+    }
+    const transaction = await this.queryRunnerFactory.createRunnerAndBeginTransaction();
+    try {
+      const chamado = await this.getById(id, transaction);
+      if (chamado.ti) {
+        throw new ForbiddenException(
+          `Chamado do Setor TI não podem ser transferidos`,
+        );
+      }
+      const { setorId, userId } = transferido;
+      const { setor, user: userToAttach } = await this.getSetorAndUser(
+        setorId,
+        userId,
+        transaction,
+      );
+      chamado.user = userToAttach;
+      chamado.setor = setor || chamado.setor;
+      await transaction.manager.save(chamado);
+      const userToAttachMsg = user ? ` Usuário ${userToAttach.username}` : '';
+      createAlteracaoDto.descricao =
+        createAlteracaoDto.descricao ||
+        `Chamado ${chamado.id} transferido para o setor ${setor.id}.${userToAttachMsg}`;
+      const alteracao = await this.alteracaoService.createAlteracao(
+        createAlteracaoDto,
+        chamado,
+        user,
+        transaction,
+      );
+      await transaction.commit();
+      this.logger.log(createAlteracaoDto.descricao);
+      chamado.alteracoes.push(alteracao);
+      return chamado;
+    } catch (err) {
+      this.logger.error(err);
+      await transaction.rollback();
+      const isUserFault =
+        err instanceof NotFoundException || err instanceof ForbiddenException;
+      if (isUserFault) {
+        throw err;
+      }
+      throw new InternalServerErrorException();
+    } finally {
+      await transaction.release();
+    }
+  }
+
   async cancelChamadoSituacao(
     id: number,
     solicitante: Solicitante,
   ): Promise<Chamado> {
     const chamado = await this.getChamadoById(id, solicitante);
     const alteracao = await this.alteracaoService.createAlteracao(
-      { data: new Date(), situacao: AlteracaoStatus.CANCELADO },
+      {
+        situacao: AlteracaoStatus.CANCELADO,
+        prioridade: null,
+      },
       chamado,
     );
     chamado.alteracoes.push(alteracao);

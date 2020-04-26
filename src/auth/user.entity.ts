@@ -11,23 +11,32 @@ import { UserRoles } from './user-roles.enum';
 import { Setor } from '../setor/setor.entity';
 import { Chamado } from '../chamado/chamado.entity';
 import { Alteracao } from '../chamado/alteracao/alteracao.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column()
   nome: string;
+
   @Column({ unique: true })
   username: string;
+
   @Column({ unique: true })
   email: string;
+
   @Column()
+  @Exclude()
   password: string;
+
   @Column({ nullable: true })
   telefone: string;
+
   @Column()
   cargo: UserRoles;
+
   @Column({ nullable: true })
   setorId: number;
 

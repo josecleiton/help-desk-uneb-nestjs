@@ -11,12 +11,16 @@ import { Chamado } from '../chamado/chamado.entity';
 export class Solicitante extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column({ unique: true })
   cpf: string;
+
   @Column({ unique: true })
   email: string;
+
   @Column({ nullable: true })
   telefone?: string;
+
   @Column({ default: 'Usuário' })
   nome: string;
 

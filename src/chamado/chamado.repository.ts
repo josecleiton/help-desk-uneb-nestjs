@@ -6,7 +6,7 @@ import { ChamadoTI } from './chamado-ti.entity';
 import { Solicitante } from '../solicitante/solicitante.entity';
 import { Setor } from '../setor/setor.entity';
 import { Problema } from '../setor/problema/problema.entity';
-import { getValueAsPromise } from 'src/util/promise-type.util';
+import { getValueAsPromise } from '../util/promise-type.util';
 
 @EntityRepository(Chamado)
 export class ChamadoRepository extends Repository<Chamado> {

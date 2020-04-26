@@ -19,16 +19,22 @@ import { ChamadoTI } from './chamado-ti.entity';
 export class Chamado extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column({ type: 'text' })
   descricao: string;
+
   @Column()
   solicitanteId: number;
+
   @Column()
   setorId: number;
+
   @Column({ nullable: true })
   problemaId: number;
+
   @Column({ nullable: true })
   userId: number;
+
   @Column({ nullable: true })
   chamadoTiId: number;
 

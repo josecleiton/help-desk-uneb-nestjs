@@ -11,12 +11,16 @@ import { Chamado } from './chamado.entity';
 export class ChamadoTI extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column()
   software: string;
+
   @Column()
   dataUtilizacao: Date;
+
   @Column({ type: 'text', nullable: true })
   link: string;
+
   @Column({ type: 'text', nullable: true })
   plugins: string;
 
