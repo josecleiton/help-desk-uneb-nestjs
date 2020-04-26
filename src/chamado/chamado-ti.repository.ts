@@ -1,7 +1,7 @@
 import { Repository, EntityRepository } from 'typeorm';
 import { ChamadoTI } from './chamado-ti.entity';
 import { CreateChamadoTIDto } from './dto/create-chamado-ti.dto';
-import { QueryRunnerTransaction } from '../database-util/query-runner.factory';
+import { QueryRunnerTransaction } from '../util/query-runner.factory';
 
 @EntityRepository(ChamadoTI)
 export class ChamadoTIRepository extends Repository<ChamadoTI> {

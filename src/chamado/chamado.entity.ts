@@ -39,6 +39,7 @@ export class Chamado extends BaseEntity {
   @OneToMany(
     () => Alteracao,
     alteracao => alteracao.chamado,
+    { eager: true },
   )
   alteracoes: Alteracao[];
 
@@ -61,5 +62,5 @@ export class Chamado extends BaseEntity {
     () => Solicitante,
     solicitante => solicitante.chamados,
   )
-  solicitante: Solicitante;
+  solicitante: Promise<Solicitante>;
 }

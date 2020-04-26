@@ -16,7 +16,7 @@ export class Alteracao extends BaseEntity {
   id: number;
   @Column()
   data: Date;
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   descricao: string;
   @Column({ default: AlteracaoStatus.ABERTO })
   situacao: AlteracaoStatus;
@@ -38,5 +38,17 @@ export class Alteracao extends BaseEntity {
   )
   user: User;
 
+  private situacaoColor = {
+    [AlteracaoStatus.ABERTO]: 'white',
+    [AlteracaoStatus.CANCELADO]: 'red',
+    [AlteracaoStatus.CONCLUIDO]: 'green',
+    [AlteracaoStatus.EM_ATENDIMENTO]: 'blue',
+    [AlteracaoStatus.PENDENTE]: 'yellow',
+    [AlteracaoStatus.TRANSFERIDO]: 'orange',
+  };
   situacaoStatusChanger = new AlteracaoStatusChanger();
+
+  get color() {
+    return this.situacaoColor[this.situacao];
+  }
 }

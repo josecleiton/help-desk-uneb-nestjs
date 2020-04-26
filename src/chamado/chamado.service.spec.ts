@@ -4,7 +4,7 @@ import { ChamadoRepository } from './chamado.repository';
 import { ChamadoTIRepository } from './chamado-ti.repository';
 import { SolicitanteService } from '../solicitante/solicitante.service';
 import { SetorService } from '../setor/setor.service';
-import { QueryRunnerFactory } from '../database-util/query-runner.factory';
+import { QueryRunnerFactory } from '../util/query-runner.factory';
 import {
   NotFoundException,
   InternalServerErrorException,
@@ -16,6 +16,7 @@ const mockChamadoRepository = () => ({
   findOne: jest.fn(),
   delete: jest.fn(),
   createChamado: jest.fn(),
+  cancelChamadoSituacao: jest.fn(),
 });
 const mockChamadoTIRepository = () => ({
   createChamadoTI: jest.fn(),
@@ -201,12 +202,36 @@ describe('ChamadoService', () => {
   });
 
   describe('updateChamadoSituacao', () => {
+    let mockChamado;
+    let mockAlteracao;
+
+    beforeEach(() => {
+      mockChamado = { alteracoes: [] };
+      mockAlteracao = { id: 1 };
+    });
+
+    it('should be defined', () => {
+      expect(mockChamado).toBeDefined();
+      expect(mockAlteracao).toBeDefined();
+    });
+
     it('succesfully returns chamado', async () => {
-      const mockChamado = { alteracoes: [] };
-      const mockAlteracao = { id: 1 };
       chamadoRepository.findOne.mockResolvedValue(mockChamado);
       alteracaoService.createAlteracao.mockResolvedValue(mockAlteracao);
       const result = await chamadoService.updateChamadoSituacao(1, {}, {});
+      mockChamado.alteracoes.push(mockAlteracao);
+      expect(chamadoRepository.findOne).toBeCalled();
+      expect(alteracaoService.createAlteracao).toBeCalled();
+      expect(result).toEqual(mockChamado);
+    });
+
+    it('cancelChamadosSituacao', async () => {
+      chamadoRepository.findOne.mockResolvedValue(mockChamado);
+      alteracaoService.createAlteracao.mockResolvedValue(mockAlteracao);
+      const result = await chamadoService.cancelChamadoSituacao(
+        1,
+        mockSolicitante,
+      );
       mockChamado.alteracoes.push(mockAlteracao);
       expect(chamadoRepository.findOne).toBeCalled();
       expect(alteracaoService.createAlteracao).toBeCalled();

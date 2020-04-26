@@ -1,7 +1,6 @@
-FROM node:alpine
+FROM node:latest
 WORKDIR /hdu-volume/app
 COPY ./package*.json ./
-RUN npm i -g @nestjs/cli
 RUN npm ci
 COPY . .
 CMD ["npm","run", "start:dev"]

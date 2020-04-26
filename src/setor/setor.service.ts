@@ -6,7 +6,7 @@ import { Manager } from '../auth/manager.model';
 import { Admin } from '../auth/admin.model';
 import { CreateSetorDto } from './dto/create-setor.dto';
 import { UpdateSetorDto } from './dto/update-setor.dto';
-import { QueryRunnerTransaction } from '../database-util/query-runner.factory';
+import { QueryRunnerTransaction } from '../util/query-runner.factory';
 
 @Injectable()
 export class SetorService {

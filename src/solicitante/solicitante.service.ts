@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SolicitanteRepository } from './solicitante.repository';
 import { CreateSolicitanteDto } from './dto/create-solicitante.dto';
 import { Solicitante } from './solicitante.entity';
-import { QueryRunnerTransaction } from '../database-util/query-runner.factory';
+import { QueryRunnerTransaction } from '../util/query-runner.factory';
 
 @Injectable()
 export class SolicitanteService {
