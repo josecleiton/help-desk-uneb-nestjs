@@ -1,3 +1,4 @@
+import * as nodemailer from 'nodemailer';
 import {
   Processor,
   Process,
@@ -5,37 +6,19 @@ import {
   OnQueueFailed,
 } from '@nestjs/bull';
 import { Job } from 'bull';
-import { readFileSync } from 'fs';
 import { Logger } from '@nestjs/common';
-import * as hbs from 'handlebars';
-import * as path from 'path';
-import * as nodemailer from 'nodemailer';
 
 import { emailQueueConfig } from './email.queue.config';
 import { EmailJob } from './email-job.interface.dto';
 import { emailConfig, emailFrom } from '../config/email.config';
-import { hbsHelpers } from './email.constants';
-
-hbs.registerHelper(hbsHelpers.color, function(): string {
-  return `"color: ${this.color};"`;
-});
-
-hbs.registerHelper(hbsHelpers.upperCase, function(v: string): string {
-  return v.toUpperCase();
-});
+import { TemplateEmailCompiler } from './template/template.compiler';
 
 @Processor(emailQueueConfig.name)
 export class EmailConsumer {
-  private basePath = path.join(
-    __dirname,
-    '..',
-    '..',
-    'resources',
-    'views',
-    'emails',
-  );
   private logger = new Logger('EmailConsumer');
   private transporter = nodemailer.createTransport(emailConfig);
+
+  constructor(private templateCompiler: TemplateEmailCompiler) {}
 
   @OnQueueWaiting()
   onWaiting(jobId: number) {
@@ -52,13 +35,21 @@ export class EmailConsumer {
   async sendEmail(job: Job<EmailJob>): Promise<void> {
     this.logger.log('Job started');
     const { data } = job;
-    const html = this.compileTemplate(job.data);
+    const html = this.templateCompiler.compileEmail(data);
     if (!html) {
-      const msg = `O conteúdo em HTML é requirido. Talvez o caminho esteja incorreto.`;
+      const msg =
+        'O conteúdo em HTML é requirido. Talvez o caminho esteja incorreto.';
       this.logger.error(msg);
       throw new Error(msg);
     }
-    const text = this.compileTemplate(data, true);
+    const text = this.templateCompiler.compileEmail(data, true);
+    if (!text) {
+      this.logger.warn(
+        `TemplateView ${data.view} sem a versão text plain
+         Toda TemplateView deve ter sua versão em texto.
+         Porque isso evita que o email caia em spam`,
+      );
+    }
     const { person, subject } = data;
     const info = await this.transporter.sendMail({
       from: emailFrom,
@@ -68,19 +59,5 @@ export class EmailConsumer {
       html,
     });
     this.logger.log(JSON.stringify(info));
-  }
-
-  private compileTemplate(data: EmailJob, text?: boolean): string {
-    const file = `${data.view}${text ? '.text' : ''}.hbs`;
-    const source = readFileSync(path.join(this.basePath, file));
-    if (!source) {
-      return null;
-    }
-    const template = hbs.compile(source.toString());
-    const { vars, person } = data;
-
-    const dataTest = { ...vars, person };
-    console.log(dataTest);
-    return template(dataTest);
   }
 }

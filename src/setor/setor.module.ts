@@ -8,9 +8,9 @@ import { ProblemaModule } from './problema/problema.module';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([SetorRepository]),
     ProblemaModule,
     forwardRef(() => AuthModule),
-    TypeOrmModule.forFeature([SetorRepository]),
   ],
   controllers: [SetorController],
   providers: [SetorService],

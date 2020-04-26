@@ -6,8 +6,3 @@ export const emailViews: EmailViews = {
     subject: 'Um assunto',
   },
 };
-
-export const hbsHelpers = {
-  color: 'colorHelper',
-  upperCase: 'upperCaseHelper',
-};
