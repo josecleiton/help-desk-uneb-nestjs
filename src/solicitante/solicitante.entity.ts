@@ -17,6 +17,8 @@ export class Solicitante extends BaseEntity {
   email: string;
   @Column({ nullable: true })
   telefone?: string;
+  @Column({ default: 'Usuário' })
+  nome: string;
 
   @OneToMany(
     () => Chamado,

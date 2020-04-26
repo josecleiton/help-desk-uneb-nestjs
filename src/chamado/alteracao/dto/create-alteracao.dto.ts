@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsEnum } from 'class-validator';
+import { IsString, IsNotEmpty, IsEnum, IsOptional } from 'class-validator';
 import { AlteracaoStatus } from '../alteracao.status';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -9,10 +9,11 @@ import { ApiProperty } from '@nestjs/swagger';
 // ]) {}
 
 export class CreateAlteracaoDto {
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ description: 'Descrição da alteração', type: String })
-  descricao: string;
+  descricao?: string;
   @IsEnum(AlteracaoStatus)
   @ApiProperty({
     description: 'Status da Alteração',

@@ -23,6 +23,9 @@ export class SetorRepository extends Repository<Setor> {
     setor.nome = nome;
     setor.telefone = telefone;
     await setor.save();
+    setor.chamados = [];
+    setor.problemas = [];
+    setor.users = [];
     return setor;
   }
 }

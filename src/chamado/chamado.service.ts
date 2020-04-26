@@ -10,7 +10,7 @@ import { CreateChamadoDto } from './dto/create-chamado.dto';
 import { Solicitante } from '../solicitante/solicitante.entity';
 import { ChamadoRepository } from './chamado.repository';
 import { ChamadoTIRepository } from './chamado-ti.repository';
-import { QueryRunnerFactory } from '../database-util/query-runner.factory';
+import { QueryRunnerFactory } from '../util/query-runner.factory';
 import { SolicitanteService } from '../solicitante/solicitante.service';
 import { SetorService } from '../setor/setor.service';
 import { Problema } from '../setor/problema/problema.entity';
@@ -88,10 +88,11 @@ export class ChamadoService {
       return chamado;
     } catch (err) {
       await transaction.rollback();
+      console.log(err);
+      this.logger.error(`createChamado rollback. ${JSON.stringify(err)}`);
       if (err instanceof NotFoundException) {
         throw err;
       }
-      this.logger.error(`${JSON.stringify(err)}`);
       throw new InternalServerErrorException();
     } finally {
       await transaction.release();
@@ -110,21 +111,43 @@ export class ChamadoService {
     return chamado;
   }
 
+  private async getById(id: number): Promise<Chamado> {
+    const chamado = await this.chamadoRepository.findOne(id);
+    if (!chamado) {
+      throw new NotFoundException(`Chamado #${id} não encontrado.`);
+    }
+    return chamado;
+  }
+
   async updateChamadoSituacao(
     id: number,
     createAlteracaoDto: CreateAlteracaoDto,
     user: User,
   ): Promise<Chamado> {
-    const chamado = await this.chamadoRepository.findOne(id);
-    if (!chamado) {
-      throw new NotFoundException(`Chamado #${id} não encontrado.`);
-    }
+    const chamado = await this.getById(id);
     const alteracao = await this.alteracaoService.createAlteracao(
       createAlteracaoDto,
       chamado,
       user,
     );
     chamado.alteracoes.push(alteracao);
+    this.logger.log(
+      `Situação do Chamado #${id} atualizado pelo Técnico ${user.username}`,
+    );
+    return chamado;
+  }
+
+  async cancelChamadoSituacao(
+    id: number,
+    solicitante: Solicitante,
+  ): Promise<Chamado> {
+    const chamado = await this.getChamadoById(id, solicitante);
+    const alteracao = await this.alteracaoService.createAlteracao(
+      { data: new Date(), situacao: AlteracaoStatus.CANCELADO },
+      chamado,
+    );
+    chamado.alteracoes.push(alteracao);
+    this.logger.log(`Chamado #${id} cancelado por seu solicitante.`);
     return chamado;
   }
 

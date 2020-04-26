@@ -6,17 +6,19 @@ import { AlteracaoModule } from './alteracao/alteracao.module';
 import { SolicitanteModule } from '../solicitante/solicitante.module';
 import { ChamadoRepository } from './chamado.repository';
 import { ChamadoTIRepository } from './chamado-ti.repository';
-import { DatabaseUtilModule } from '../database-util/database-util.module';
 import { SetorModule } from '../setor/setor.module';
 import { AuthModule } from '../auth/auth.module';
+import { EmailModule } from 'src/email/email.module';
+import { UtilModule } from '../util/util.module';
 
 @Module({
   imports: [
     SolicitanteModule,
     AlteracaoModule,
-    DatabaseUtilModule,
+    UtilModule,
     SetorModule,
     AuthModule,
+    EmailModule,
     TypeOrmModule.forFeature([ChamadoRepository, ChamadoTIRepository]),
   ],
   providers: [ChamadoService],

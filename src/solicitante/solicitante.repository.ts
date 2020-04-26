@@ -1,7 +1,7 @@
 import { Repository, EntityRepository } from 'typeorm';
 import { Solicitante } from './solicitante.entity';
 import { CreateSolicitanteDto } from './dto/create-solicitante.dto';
-import { QueryRunnerTransaction } from '../database-util/query-runner.factory';
+import { QueryRunnerTransaction } from '../util/query-runner.factory';
 
 @EntityRepository(Solicitante)
 export class SolicitanteRepository extends Repository<Solicitante> {
@@ -16,6 +16,7 @@ export class SolicitanteRepository extends Repository<Solicitante> {
     } else {
       await solicitante.save();
     }
+    solicitante.chamados = [];
     return solicitante;
   }
 }

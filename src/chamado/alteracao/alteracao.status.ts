@@ -34,3 +34,18 @@ export class AlteracaoStatusChanger implements StatusChanger<AlteracaoStatus> {
     }
   }
 }
+
+export class AlteracaoStatusSubject {
+  private statusSubjectMap = {
+    [AlteracaoStatus.ABERTO]: 'Chamado Criado!',
+    [AlteracaoStatus.CONCLUIDO]: 'Chamado Concluído!',
+  };
+
+  getSubject(status: AlteracaoStatus): string {
+    if (status === AlteracaoStatus.CANCELADO) {
+      return null;
+    }
+    const subject = this.statusSubjectMap[status];
+    return subject || 'Chamado Atualizado';
+  }
+}

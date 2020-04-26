@@ -2,7 +2,7 @@ import { Repository, EntityRepository } from 'typeorm';
 import { Alteracao } from './alteracao.entity';
 import { CreateAlteracaoDto } from './dto/create-alteracao.dto';
 import { Chamado } from '../chamado.entity';
-import { QueryRunnerTransaction } from '../../database-util/query-runner.factory';
+import { QueryRunnerTransaction } from '../../util/query-runner.factory';
 import { ForbiddenException } from '@nestjs/common';
 import { User } from 'src/auth/user.entity';
 
@@ -15,7 +15,7 @@ export class AlteracaoRepository extends Repository<Alteracao> {
     transaction?: QueryRunnerTransaction,
   ): Promise<Alteracao> {
     const { alteracoes } = chamado;
-    if (alteracoes.length) {
+    if (alteracoes && alteracoes.length) {
       const lastAlteracao = alteracoes[alteracoes.length - 1];
       const { situacao: oldSituacao, situacaoStatusChanger } = lastAlteracao;
       const { situacao: newSituacao } = createAlteracaoDto;
@@ -34,6 +34,8 @@ export class AlteracaoRepository extends Repository<Alteracao> {
     } else {
       await alteracao.save();
     }
+    delete alteracao.chamado;
+    delete alteracao.situacaoStatusChanger;
     return alteracao;
   }
 }

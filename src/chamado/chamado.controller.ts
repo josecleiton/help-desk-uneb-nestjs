@@ -8,6 +8,8 @@ import {
   ParseIntPipe,
   Param,
   Put,
+  SerializeOptions,
+  Delete,
 } from '@nestjs/common';
 import { ApiHeader } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -33,6 +35,7 @@ export class ChamadoController {
   }
 
   @Post()
+  @SerializeOptions({ excludePrefixes: ['_'] })
   create(
     @Body(ValidationPipe) createChamadoDto: CreateChamadoDto,
   ): Promise<Chamado> {
@@ -64,13 +67,13 @@ export class ChamadoController {
     );
   }
 
-  // @Delete(':id')
-  // @ApiHeader(solicitanteAuthHeaderSwagger)
-  // @UseGuards(SolicitanteGuard)
-  // delete(
-  //   @Param('id', ParseIntPipe) id: number,
-  //   @GetSolicitante() solicitante: Solicitante,
-  // ): Promise<void> {
-  //   return this.chamadoService.deleteChamado(id, solicitante);
-  // }
+  @Delete(':id')
+  @ApiHeader(solicitanteAuthHeaderSwagger)
+  @UseGuards(SolicitanteGuard)
+  delete(
+    @Param('id', ParseIntPipe) id: number,
+    @GetSolicitante() solicitante: Solicitante,
+  ): Promise<Chamado> {
+    return this.chamadoService.cancelChamadoSituacao(id, solicitante);
+  }
 }
