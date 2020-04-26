@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import * as helmet from 'helmet';
-import * as csurf from 'csurf';
 import * as rateLimit from 'express-rate-limit';
 
 import { NestFactory } from '@nestjs/core';
@@ -25,7 +24,6 @@ function buildSwaggerDoc(app: INestApplication) {
 
 function applySecurityLayer(app: INestApplication) {
   app.use(helmet());
-  app.use(csurf());
   app.use(rateLimit(rateLimitConfig));
   app.enableCors(corsConfig);
   logger.log('Application security layer applied');
