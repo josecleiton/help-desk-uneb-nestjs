@@ -31,6 +31,7 @@ import { Setor } from '../setor/setor.entity';
 import { GetChamadosDto } from './dto/get-chamados.dto';
 import { maxChamadosPerPage } from './chamado.constants';
 import { FindConditions, Like } from 'typeorm';
+import { ChamadoGateway } from './chamado.gateway';
 
 @Injectable()
 export class ChamadoService {
@@ -45,6 +46,8 @@ export class ChamadoService {
     private solicitanteService: SolicitanteService,
     private setorService: SetorService,
     private alteracaoService: AlteracaoService,
+
+    private chamadoGateway: ChamadoGateway,
     private queryRunnerFactory: QueryRunnerFactory,
   ) {}
 
@@ -124,6 +127,7 @@ export class ChamadoService {
       );
       chamado.alteracoes.push(alteracao);
       await transaction.commit();
+      await this.chamadoGateway.broadcastChamados(chamado.setorId);
       return chamado;
     } catch (err) {
       await transaction.rollback();
@@ -184,6 +188,7 @@ export class ChamadoService {
     this.logger.log(
       `Situação do Chamado #${id} atualizado pelo Técnico ${user.username}`,
     );
+    await this.chamadoGateway.broadcastChamados(chamado.setorId);
     return chamado;
   }
 
@@ -244,6 +249,7 @@ export class ChamadoService {
       await transaction.commit();
       this.logger.log(createAlteracaoDto.descricao);
       chamado.alteracoes.push(alteracao);
+      await this.chamadoGateway.broadcastChamados(chamado.setorId);
       return chamado;
     } catch (err) {
       this.logger.error(err);
@@ -274,6 +280,7 @@ export class ChamadoService {
     );
     chamado.alteracoes.push(alteracao);
     this.logger.log(`Chamado #${id} cancelado por seu solicitante.`);
+    await this.chamadoGateway.broadcastChamados(chamado.setorId);
     return chamado;
   }
 
