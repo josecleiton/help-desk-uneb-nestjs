@@ -7,6 +7,8 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { paginate, Pagination } from 'nestjs-typeorm-paginate';
+
 import { Chamado } from './chamado.entity';
 import { CreateChamadoDto } from './dto/create-chamado.dto';
 import { Solicitante } from '../solicitante/solicitante.entity';
@@ -25,7 +27,10 @@ import { AlteracaoStatus } from './alteracao/alteracao.status';
 import { User } from '../auth/user.entity';
 import { CreateAlteracaoDto } from './alteracao/dto/create-alteracao.dto';
 import { AlteracaoPriority } from './alteracao/alteracao-priority.enum';
-import { Setor } from 'src/setor/setor.entity';
+import { Setor } from '../setor/setor.entity';
+import { GetChamadosDto } from './dto/get-chamados.dto';
+import { maxChamadosPerPage } from './chamado.constants';
+import { FindConditions } from 'typeorm';
 
 @Injectable()
 export class ChamadoService {
@@ -36,16 +41,42 @@ export class ChamadoService {
     private chamadoRepository: ChamadoRepository,
     @InjectRepository(ChamadoTIRepository)
     private chamadoTIRepository: ChamadoTIRepository,
+
     private solicitanteService: SolicitanteService,
     private setorService: SetorService,
     private alteracaoService: AlteracaoService,
     private queryRunnerFactory: QueryRunnerFactory,
   ) {}
 
-  async getChamados(solicitante: Solicitante): Promise<Chamado[]> {
-    return this.chamadoRepository.find({
-      where: { solicitanteId: solicitante.id },
-    });
+  private getChamados(
+    getChamadosDto: GetChamadosDto,
+    searchOptions: FindConditions<Chamado>,
+  ): Promise<Pagination<Chamado>> {
+    const { page = 1, limit = maxChamadosPerPage } = getChamadosDto;
+    const { search } = getChamadosDto;
+    if (search) {
+      searchOptions.descricao = `%${search}%`;
+    }
+    return paginate<Chamado>(
+      this.chamadoRepository,
+      { page, limit },
+      searchOptions,
+    );
+  }
+
+  async getChamadosBySolicitante(
+    solicitante: Solicitante,
+    getChamadosDto: GetChamadosDto,
+  ): Promise<Pagination<Chamado>> {
+    return this.getChamados(getChamadosDto, { solicitanteId: solicitante.id });
+  }
+
+  async getChamadoByUser(
+    user: User,
+    getChamadosDto: GetChamadosDto,
+  ): Promise<Pagination<Chamado>> {
+    const setorId = user.isAdmin() ? null : user.setorId;
+    return this.getChamados(getChamadosDto, { setorId });
   }
 
   async createChamado(createChamadoDto: CreateChamadoDto): Promise<Chamado> {
@@ -95,8 +126,8 @@ export class ChamadoService {
       return chamado;
     } catch (err) {
       await transaction.rollback();
-      console.log(err);
       this.logger.error(`createChamado rollback. ${JSON.stringify(err)}`);
+      console.log(err);
       if (err instanceof NotFoundException) {
         throw err;
       }
@@ -171,7 +202,7 @@ export class ChamadoService {
     return { setor, user };
   }
 
-  async tranferChamado(
+  async transferChamado(
     id: number,
     createAlteracaoDto: CreateAlteracaoDto,
     user: User,
@@ -215,6 +246,7 @@ export class ChamadoService {
       return chamado;
     } catch (err) {
       this.logger.error(err);
+      throw err;
       await transaction.rollback();
       const isUserFault =
         err instanceof NotFoundException || err instanceof ForbiddenException;

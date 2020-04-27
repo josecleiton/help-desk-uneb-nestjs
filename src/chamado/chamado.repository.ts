@@ -33,4 +33,30 @@ export class ChamadoRepository extends Repository<Chamado> {
     chamado.alteracoes = [];
     return chamado;
   }
+
+  // async getChamados(
+  //   getChamadosByUserDto: GetChamadosByUserDto,
+  //   setorId?: number,
+  // ): Promise<Chamado[]> {
+  //   const {
+  //     page,
+  //     maxPerPage = maxChamadosPerPage,
+  //     search,
+  //   } = getChamadosByUserDto;
+  //   const query = this.createQueryBuilder('chamado');
+  //   if (setorId) {
+  //     query.where({ setorId });
+  //   }
+
+  //   if (page) {
+  //   }
+
+  //   if (search) {
+  //     query.andWhere('(chamado.description LIKE :search)', {
+  //       search: `%${search}%`,
+  //     });
+  //   }
+  //   const chamados = await query.getMany();
+  //   return chamados;
+  // }
 }

@@ -14,6 +14,9 @@ import { User } from '../auth/user.entity';
 import { Solicitante } from '../solicitante/solicitante.entity';
 import { Alteracao } from './alteracao/alteracao.entity';
 import { ChamadoTI } from './chamado-ti.entity';
+import { Expose } from 'class-transformer';
+import { AlteracaoStatus } from './alteracao/alteracao.status';
+import { AlteracaoPriority } from './alteracao/alteracao-priority.enum';
 
 @Entity()
 export class Chamado extends BaseEntity {
@@ -69,4 +72,15 @@ export class Chamado extends BaseEntity {
     solicitante => solicitante.chamados,
   )
   solicitante: Promise<Solicitante>;
+
+  @Expose()
+  get priority(): AlteracaoPriority {
+    for (let idx = this.alteracoes.length - 1; idx >= 0; --idx) {
+      const alteracao = this.alteracoes[idx];
+      if (alteracao.prioridade) {
+        return alteracao.prioridade;
+      }
+    }
+    return null;
+  }
 }

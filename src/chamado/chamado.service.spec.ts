@@ -123,22 +123,27 @@ describe('ChamadoService', () => {
     });
   });
 
-  describe('createChamado', () => {
-    const transaction = {
-      commit: jest.fn(),
-      rollback: jest.fn(),
-      release: jest.fn(),
-    };
+  describe('testsWithTransaction', () => {
+    let transaction;
     let mockDto;
     let setor;
-    const chamado = { alteracoes: [] };
-    const solicitante = {};
-    const alteracao = {};
+    let chamado;
+    let solicitante;
+    let alteracao;
+
     beforeEach(() => {
       setor = {};
+      chamado = { alteracoes: [] };
+      solicitante = {};
+      alteracao = {};
       queryRunnerFactory.createRunnerAndBeginTransaction.mockResolvedValue(
         transaction,
       );
+      transaction = {
+        commit: jest.fn(),
+        rollback: jest.fn(),
+        release: jest.fn(),
+      };
       transaction.release.mockResolvedValue(null);
       setorService.getSetorByID.mockResolvedValue(setor);
       solicitanteService.findSolicitanteOrCreate.mockResolvedValue(solicitante);
@@ -151,53 +156,68 @@ describe('ChamadoService', () => {
       };
     });
 
-    it('createChamadoDto should be defined', () => {
+    it('should be deifned', () => {
+      expect(transaction).toBeDefined();
       expect(mockDto).toBeDefined();
       expect(setor).toBeDefined();
+      expect(chamado).toBeDefined();
+      expect(solicitante).toBeDefined();
+      expect(alteracao).toBeDefined();
     });
 
-    it('create chamado successfully', async () => {
-      transaction.commit.mockResolvedValue(null);
-      const result = await chamadoService.createChamado(mockDto);
-      expect(queryRunnerFactory.createRunnerAndBeginTransaction).toBeCalled();
-      expect(setorService.getSetorByID).toBeCalled();
-      expect(solicitanteService.findSolicitanteOrCreate).toBeCalled();
-      expect(chamadoRepository.createChamado).toBeCalled();
-      expect(result).toEqual(chamado);
-    });
+    describe('createChamado', () => {
+      it('createChamadoDto should be defined', () => {
+        expect(mockDto).toBeDefined();
+        expect(setor).toBeDefined();
+      });
 
-    it('create chamado ti successfully', async () => {
-      const id = 1;
-      setor.problemas = [{ id }];
-      mockDto.ti = {};
-      mockDto.problemaId = id;
-      transaction.commit.mockResolvedValue(null);
-      chamadoTIRepository.createChamadoTI.mockResolvedValue(mockDto.ti);
-      const result = await chamadoService.createChamado(mockDto);
-      expect(queryRunnerFactory.createRunnerAndBeginTransaction).toBeCalled();
-      expect(setorService.getSetorByID).toBeCalled();
-      expect(solicitanteService.findSolicitanteOrCreate).toBeCalled();
-      expect(chamadoTIRepository.createChamadoTI).toBeCalled();
-      expect(chamadoRepository.createChamado).toBeCalled();
-      expect(result).toEqual(chamado);
-    });
+      it('create chamado successfully', async () => {
+        transaction.commit.mockResolvedValue(null);
+        const result = await chamadoService.createChamado(mockDto);
+        expect(queryRunnerFactory.createRunnerAndBeginTransaction).toBeCalled();
+        expect(setorService.getSetorByID).toBeCalled();
+        expect(solicitanteService.findSolicitanteOrCreate).toBeCalled();
+        expect(chamadoRepository.createChamado).toBeCalled();
+        expect(result).toEqual(chamado);
+      });
 
-    it('throw 404 as problema not found in setor', async () => {
-      setor.problemas = [];
-      mockDto.problemaId = 1;
-      transaction.rollback.mockResolvedValue(null);
-      expect(chamadoService.createChamado(mockDto)).rejects.toThrow(
-        NotFoundException,
-      );
-      expect(queryRunnerFactory.createRunnerAndBeginTransaction).toBeCalled();
-    });
+      it('create chamado ti successfully', async () => {
+        const id = 1;
+        setor.problemas = [{ id }];
+        mockDto.ti = {};
+        mockDto.problemaId = id;
+        transaction.commit.mockResolvedValue(null);
+        chamadoTIRepository.createChamadoTI.mockResolvedValue(mockDto.ti);
+        const result = await chamadoService.createChamado(mockDto);
+        expect(queryRunnerFactory.createRunnerAndBeginTransaction).toBeCalled();
+        expect(setorService.getSetorByID).toBeCalled();
+        expect(solicitanteService.findSolicitanteOrCreate).toBeCalled();
+        expect(chamadoTIRepository.createChamadoTI).toBeCalled();
+        expect(chamadoRepository.createChamado).toBeCalled();
+        expect(result).toEqual(chamado);
+      });
 
-    it('throw 500 as transaction rollback', () => {
-      transaction.commit.mockRejectedValue(new Error('testDatabaseError'));
-      expect(chamadoService.createChamado(mockDto)).rejects.toThrow(
-        InternalServerErrorException,
-      );
-      expect(queryRunnerFactory.createRunnerAndBeginTransaction).toBeCalled();
+      it('throw 404 as problema not found in setor', () => {
+        setor.problemas = [];
+        mockDto.problemaId = 1;
+        transaction.rollback.mockResolvedValue(null);
+        expect(chamadoService.createChamado(mockDto)).rejects.toThrow(
+          NotFoundException,
+        );
+        expect(queryRunnerFactory.createRunnerAndBeginTransaction).toBeCalled();
+      });
+
+      it('throw 500 as transaction rollback', () => {
+        transaction.rollback.mockResolvedValue(null);
+        alteracaoService.createAlteracao.mockRejectedValue(
+          new Error('databaseError'),
+        );
+        expect(chamadoService.createChamado(mockDto)).rejects.toThrow(
+          InternalServerErrorException,
+        );
+        expect(transaction.commit).not.toBeCalled();
+        expect(queryRunnerFactory.createRunnerAndBeginTransaction).toBeCalled();
+      });
     });
   });
 
