@@ -15,10 +15,13 @@ import { Chamado } from '../chamado/chamado.entity';
 export class Setor extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column()
   nome: string;
+
   @Column()
   telefone: string;
+
   @Column()
   email: string;
 

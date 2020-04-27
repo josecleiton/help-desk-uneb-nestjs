@@ -6,7 +6,7 @@ import { ChamadoTI } from './chamado-ti.entity';
 import { Solicitante } from '../solicitante/solicitante.entity';
 import { Setor } from '../setor/setor.entity';
 import { Problema } from '../setor/problema/problema.entity';
-import { getValueAsPromise } from 'src/util/promise-type.util';
+import { getValueAsPromise } from '../util/promise-type.util';
 
 @EntityRepository(Chamado)
 export class ChamadoRepository extends Repository<Chamado> {
@@ -33,4 +33,30 @@ export class ChamadoRepository extends Repository<Chamado> {
     chamado.alteracoes = [];
     return chamado;
   }
+
+  // async getChamados(
+  //   getChamadosByUserDto: GetChamadosByUserDto,
+  //   setorId?: number,
+  // ): Promise<Chamado[]> {
+  //   const {
+  //     page,
+  //     maxPerPage = maxChamadosPerPage,
+  //     search,
+  //   } = getChamadosByUserDto;
+  //   const query = this.createQueryBuilder('chamado');
+  //   if (setorId) {
+  //     query.where({ setorId });
+  //   }
+
+  //   if (page) {
+  //   }
+
+  //   if (search) {
+  //     query.andWhere('(chamado.description LIKE :search)', {
+  //       search: `%${search}%`,
+  //     });
+  //   }
+  //   const chamados = await query.getMany();
+  //   return chamados;
+  // }
 }

@@ -9,21 +9,28 @@ import { Chamado } from '../chamado.entity';
 import { User } from '../../auth/user.entity';
 import { AlteracaoStatus, AlteracaoStatusChanger } from './alteracao.status';
 import { AlteracaoPriority } from './alteracao-priority.enum';
+import { Exclude, Expose } from 'class-transformer';
 
 @Entity()
 export class Alteracao extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column()
   data: Date;
+
   @Column({ type: 'text', nullable: true })
   descricao: string;
+
   @Column({ default: AlteracaoStatus.ABERTO })
   situacao: AlteracaoStatus;
-  @Column({ default: AlteracaoPriority.MEDIA })
+
+  @Column({ nullable: true })
   prioridade: AlteracaoPriority;
+
   @Column()
   chamadoId: number;
+
   @Column({ nullable: true })
   userId: number;
 
@@ -38,6 +45,7 @@ export class Alteracao extends BaseEntity {
   )
   user: User;
 
+  @Exclude()
   private situacaoColor = {
     [AlteracaoStatus.ABERTO]: 'white',
     [AlteracaoStatus.CANCELADO]: 'red',
@@ -46,9 +54,12 @@ export class Alteracao extends BaseEntity {
     [AlteracaoStatus.PENDENTE]: 'yellow',
     [AlteracaoStatus.TRANSFERIDO]: 'orange',
   };
+
+  @Exclude()
   situacaoStatusChanger = new AlteracaoStatusChanger();
 
-  get color() {
+  @Expose()
+  get color(): string {
     return this.situacaoColor[this.situacao];
   }
 }

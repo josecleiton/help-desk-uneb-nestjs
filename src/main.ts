@@ -20,13 +20,14 @@ function buildSwaggerDoc(app: INestApplication) {
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup(docsPath, app, document);
+  logger.log('Documentação gerada usando Swagger (OpenAPI)');
 }
 
 function applySecurityLayer(app: INestApplication) {
   app.use(helmet());
   app.use(rateLimit(rateLimitConfig));
   app.enableCors(corsConfig);
-  logger.log('Application security layer applied');
+  logger.log('Camada de Segurança aplicada ao app');
 }
 
 async function bootstrap() {
@@ -34,8 +35,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   buildSwaggerDoc(app);
   applySecurityLayer(app);
+  if (!PORT) {
+    logger.warn('App usando porta padrão');
+  }
   await app.listen(PORT || 3000);
-  logger.log(`Application listening on port ${PORT}`);
+  logger.log(`App escutando a porta :${PORT}`);
 }
 
 bootstrap();
