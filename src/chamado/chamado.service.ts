@@ -30,7 +30,7 @@ import { AlteracaoPriority } from './alteracao/alteracao-priority.enum';
 import { Setor } from '../setor/setor.entity';
 import { GetChamadosDto } from './dto/get-chamados.dto';
 import { maxChamadosPerPage } from './chamado.constants';
-import { FindConditions } from 'typeorm';
+import { FindConditions, Like } from 'typeorm';
 
 @Injectable()
 export class ChamadoService {
@@ -52,15 +52,16 @@ export class ChamadoService {
     getChamadosDto: GetChamadosDto,
     searchOptions: FindConditions<Chamado>,
   ): Promise<Pagination<Chamado>> {
-    const { page = 1, limit = maxChamadosPerPage } = getChamadosDto;
-    const { search } = getChamadosDto;
+    const { page = 1, search } = getChamadosDto;
+    let { limit = maxChamadosPerPage } = getChamadosDto;
+    limit = Math.min(limit, maxChamadosPerPage);
     if (search) {
-      searchOptions.descricao = `%${search}%`;
+      searchOptions.descricao = Like(`%${search}%`);
     }
     return paginate<Chamado>(
       this.chamadoRepository,
       { page, limit },
-      searchOptions,
+      { where: { ...searchOptions } },
     );
   }
 
