@@ -17,6 +17,7 @@ export const dbConfig: TypeOrmModuleOptions = {
   type: 'postgres',
   port: parseInt(DB_PORT),
   entities: [__dirname + '/../**/*.entity.{js,ts}'],
+  ssl: NODE_ENV === 'production',
   synchronize: true,
   logging: NODE_ENV === 'development',
 };
