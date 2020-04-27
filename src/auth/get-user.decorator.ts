@@ -14,6 +14,13 @@ export const GetUser = createParamDecorator(
   },
 );
 
+export const GetUserWs = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext): User => {
+    const { user } = ctx.switchToWs().getClient().handshake;
+    return user;
+  },
+);
+
 export const GetManager = createParamDecorator(
   (data: unknown, ctx: ExecutionContext): Manager => {
     const req = ctx.switchToHttp().getRequest();

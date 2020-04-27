@@ -13,7 +13,7 @@ import {
   ClassSerializerInterceptor,
   Query,
 } from '@nestjs/common';
-import { ApiHeader } from '@nestjs/swagger';
+import { ApiHeader, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { ChamadoService } from './chamado.service';
@@ -36,6 +36,7 @@ export class ChamadoController {
 
   @Get()
   @UseGuards(AuthGuard())
+  @ApiBearerAuth()
   getAllByUser(
     @Query(ValidationPipe) getChamadosByUserDto: GetChamadosDto,
     @GetUser() user: User,
@@ -65,6 +66,7 @@ export class ChamadoController {
   @Get('solicitante/:id')
   @ApiHeader(solicitanteAuthHeaderSwagger)
   @UseGuards(SolicitanteGuard)
+  @ApiBearerAuth()
   getById(
     @Param('id', ParseIntPipe) id: number,
     @GetSolicitante() solicitante: Solicitante,
@@ -74,6 +76,7 @@ export class ChamadoController {
 
   @Put(':id/situacao')
   @UseGuards(AuthGuard())
+  @ApiBearerAuth()
   updateSituacao(
     @Param('id', ParseIntPipe) id: number,
     @GetUser() user: User,

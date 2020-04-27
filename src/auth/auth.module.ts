@@ -9,6 +9,7 @@ import { UserRepository } from './user.repository';
 import { JwtStrategy } from './jwt.strategy';
 import { jwtConfig } from '../config/jwt.config';
 import { SetorModule } from '../setor/setor.module';
+import { JwtWebSocketStrategy } from './jwt-websocket.strategy';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { SetorModule } from '../setor/setor.module';
     forwardRef(() => SetorModule),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
-  exports: [JwtStrategy, PassportModule],
+  providers: [AuthService, JwtStrategy, JwtWebSocketStrategy],
+  exports: [JwtStrategy, JwtWebSocketStrategy, PassportModule],
 })
 export class AuthModule {}

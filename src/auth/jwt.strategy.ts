@@ -10,7 +10,7 @@ import { jwtSecretKey } from './auth.constants';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  private logger = new Logger();
+  private logger = new Logger('JwtStrategy');
 
   constructor(
     @InjectRepository(UserRepository) private userRepository: UserRepository,
