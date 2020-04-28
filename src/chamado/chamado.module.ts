@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { BullModule } from '@nestjs/bull';
 
 import { AlteracaoModule } from './alteracao/alteracao.module';
 import { SetorModule } from '../setor/setor.module';
@@ -13,6 +14,9 @@ import { SolicitanteModule } from '../solicitante/solicitante.module';
 import { ChamadoRepository } from './chamado.repository';
 import { ChamadoTIRepository } from './chamado-ti.repository';
 
+import { chamadoQueueConfig } from './chamado.queue.config';
+import { ChamadoConsumer } from './chamado.consumer';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([ChamadoRepository, ChamadoTIRepository]),
@@ -22,8 +26,9 @@ import { ChamadoTIRepository } from './chamado-ti.repository';
     SetorModule,
     AuthModule,
     EmailModule,
+    BullModule.registerQueue(chamadoQueueConfig),
   ],
-  providers: [ChamadoService, ChamadoGateway],
+  providers: [ChamadoService, ChamadoConsumer, ChamadoGateway],
   controllers: [ChamadoController],
 })
 export class ChamadoModule {}

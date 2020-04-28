@@ -71,7 +71,6 @@ describe('AlteracaoService', () => {
       expect(
         alteracaoService.createAlteracao(mockDto, chamado, mockUser),
       ).rejects.toThrow(ForbiddenException);
-      expect(mockUser.isAdmin).toBeCalled();
     });
   });
 });

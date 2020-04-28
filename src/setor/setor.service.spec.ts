@@ -70,8 +70,6 @@ describe('SetorService', () => {
       expect(service.getSetorById(id, mockUser)).rejects.toThrow(
         NotFoundException,
       );
-      expect(repository.findOne).not.toBeCalled();
-      expect(mockUser.isAdmin).toBeCalled();
     });
 
     it('throws a 404 as repository return null', () => {
@@ -79,8 +77,6 @@ describe('SetorService', () => {
       expect(service.getSetorById(id, mockUser)).rejects.toThrow(
         NotFoundException,
       );
-      expect(repository.findOne).toBeCalledWith(1);
-      expect(mockUser.isAdmin).toBeCalled();
     });
   });
 
@@ -130,7 +126,6 @@ describe('SetorService', () => {
       expect(service.deleteSetor(id, mockUser)).rejects.toThrow(
         NotFoundException,
       );
-      expect(repository.delete).toBeCalledWith(1);
     });
   });
 });

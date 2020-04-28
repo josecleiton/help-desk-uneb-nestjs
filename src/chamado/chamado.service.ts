@@ -7,6 +7,8 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { Queue } from 'bull';
+import { InjectQueue } from '@nestjs/bull';
 
 import { Chamado } from './chamado.entity';
 import { CreateChamadoDto } from './dto/create-chamado.dto';
@@ -30,7 +32,8 @@ import { Setor } from '../setor/setor.entity';
 import { GetChamadosDto } from './dto/get-chamados.dto';
 import { maxChamadosPerPage } from './chamado.constants';
 import { FindConditions, Like } from 'typeorm';
-import { ChamadoGateway } from './chamado.gateway';
+import { chamadoQueueConfig, chamadoQueueEvents } from './chamado.queue.config';
+import { QueuePriority } from '../util/queue-priority.enum';
 
 @Injectable()
 export class ChamadoService {
@@ -45,9 +48,9 @@ export class ChamadoService {
     private solicitanteService: SolicitanteService,
     private setorService: SetorService,
     private alteracaoService: AlteracaoService,
-
-    private chamadoGateway: ChamadoGateway,
     private queryRunnerFactory: QueryRunnerFactory,
+
+    @InjectQueue(chamadoQueueConfig.name) private chamadoQueue: Queue,
   ) {}
 
   private getChamados(
@@ -80,6 +83,16 @@ export class ChamadoService {
   ): Promise<Pagination<Chamado>> {
     const setorId = user.isAdmin() ? null : user.setorId;
     return this.getChamados(getChamadosDto, { setorId });
+  }
+
+  private async broadcastChamado(setorId: number): Promise<boolean> {
+    const queueOptions = { priority: QueuePriority.HIGH, attempts: 2, removeOnComplete: true };
+    const job = await this.chamadoQueue.add(
+      chamadoQueueEvents.broadcastChamados,
+      setorId,
+      queueOptions,
+    );
+    return !!job;
   }
 
   async createChamado(createChamadoDto: CreateChamadoDto): Promise<Chamado> {
@@ -126,7 +139,7 @@ export class ChamadoService {
       );
       chamado.alteracoes.push(alteracao);
       await transaction.commit();
-      await this.chamadoGateway.broadcastChamados(chamado.setorId);
+      await this.broadcastChamado(chamado.setorId);
       return chamado;
     } catch (err) {
       await transaction.rollback();
@@ -187,7 +200,7 @@ export class ChamadoService {
     this.logger.log(
       `Situação do Chamado #${id} atualizado pelo Técnico ${user.username}`,
     );
-    await this.chamadoGateway.broadcastChamados(chamado.setorId);
+    await this.broadcastChamado(chamado.setorId);
     return chamado;
   }
 
@@ -245,7 +258,7 @@ export class ChamadoService {
       await transaction.commit();
       this.logger.log(createAlteracaoDto.descricao);
       chamado.alteracoes.push(alteracao);
-      await this.chamadoGateway.broadcastChamados(chamado.setorId);
+      await this.broadcastChamado(chamado.setorId);
       return chamado;
     } catch (err) {
       this.logger.error(err);
@@ -275,7 +288,7 @@ export class ChamadoService {
     );
     chamado.alteracoes.push(alteracao);
     this.logger.log(`Chamado #${id} cancelado por seu solicitante.`);
-    await this.chamadoGateway.broadcastChamados(chamado.setorId);
+    await this.broadcastChamado(chamado.setorId);
     return chamado;
   }
 

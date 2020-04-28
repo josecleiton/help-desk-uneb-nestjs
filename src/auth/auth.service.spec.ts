@@ -104,7 +104,6 @@ describe('AuthService', () => {
       expect(authService.signin(mockSignDto)).rejects.toThrow(
         UnauthorizedException,
       );
-      expect(userRepository.validateUserPassword).toBeCalledWith(mockSignDto);
     });
   });
 });

@@ -91,7 +91,6 @@ describe('ProblemaService', () => {
         expect(problemaService.getProblemaById(1, 1, mockUser)).rejects.toThrow(
           NotFoundException,
         );
-        expect(setorService.getSetorById).toBeCalled();
       });
     });
 
@@ -133,7 +132,6 @@ describe('ProblemaService', () => {
         expect(
           problemaService.deleteProblema(value, 1, mockUser),
         ).rejects.toThrow(NotFoundException);
-        expect(setorService.getSetorById).toBeCalled();
       });
     });
   });
