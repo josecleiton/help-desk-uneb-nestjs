@@ -10,6 +10,15 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { AlteracaoService } from './alteracao/alteracao.service';
+import { ChamadoGateway } from './chamado.gateway';
+
+import { mocked } from 'ts-jest/utils';
+
+import { paginate } from 'nestjs-typeorm-paginate';
+
+jest.mock('nestjs-typeorm-paginate');
+
+const mockPaginate = mocked(paginate, true);
 
 const mockChamadoRepository = () => ({
   find: jest.fn(),
@@ -31,6 +40,7 @@ const mockQueryRunnerFactory = () => ({
   createRunnerAndBeginTransaction: jest.fn(),
 });
 const mockAlteracaoService = () => ({ createAlteracao: jest.fn() });
+const mockChamadoGateway = () => ({ broadcastChamados: jest.fn() });
 
 const mockSolicitante = { id: 1 };
 
@@ -43,6 +53,7 @@ describe('ChamadoService', () => {
   let setorService;
   let queryRunnerFactory;
   let alteracaoService;
+  let chamadoGateway;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -52,8 +63,9 @@ describe('ChamadoService', () => {
         { provide: ChamadoTIRepository, useFactory: mockChamadoTIRepository },
         { provide: SolicitanteService, useFactory: mockSolicitanteService },
         { provide: SetorService, useFactory: mockSetorService },
-        { provide: QueryRunnerFactory, useFactory: mockQueryRunnerFactory },
         { provide: AlteracaoService, useFactory: mockAlteracaoService },
+        { provide: ChamadoGateway, useFactory: mockChamadoGateway },
+        { provide: QueryRunnerFactory, useFactory: mockQueryRunnerFactory },
       ],
     }).compile();
 
@@ -64,6 +76,7 @@ describe('ChamadoService', () => {
     setorService = module.get<SetorService>(SetorService);
     queryRunnerFactory = module.get<QueryRunnerFactory>(QueryRunnerFactory);
     alteracaoService = module.get<AlteracaoService>(AlteracaoService);
+    chamadoGateway = module.get<ChamadoGateway>(ChamadoGateway);
   });
 
   it('should be defined', () => {
@@ -73,13 +86,12 @@ describe('ChamadoService', () => {
     expect(solicitanteService).toBeDefined();
     expect(setorService).toBeDefined();
     expect(queryRunnerFactory).toBeDefined();
+    expect(chamadoGateway).toBeDefined();
   });
 
   it('getChamados', async () => {
-    chamadoRepository.find.mockResolvedValue(value);
-    const result = await chamadoService.getChamados(mockSolicitante);
-    expect(chamadoRepository.find).toBeCalled();
-    expect(result).toEqual(value);
+    await chamadoService.getChamados(mockSolicitante);
+    expect(mockPaginate).toBeCalled();
   });
 
   describe('getChamadoById', () => {
@@ -149,6 +161,7 @@ describe('ChamadoService', () => {
       solicitanteService.findSolicitanteOrCreate.mockResolvedValue(solicitante);
       chamadoRepository.createChamado.mockResolvedValue(chamado);
       alteracaoService.createAlteracao.mockResolvedValue(alteracao);
+      chamadoGateway.broadcastChamados.mockResolvedValue(null);
       mockDto = {
         description: 'testDescription',
         setorId: 1,
@@ -178,6 +191,7 @@ describe('ChamadoService', () => {
         expect(setorService.getSetorByID).toBeCalled();
         expect(solicitanteService.findSolicitanteOrCreate).toBeCalled();
         expect(chamadoRepository.createChamado).toBeCalled();
+        expect(chamadoGateway.broadcastChamados).toBeCalled();
         expect(result).toEqual(chamado);
       });
 
@@ -194,6 +208,7 @@ describe('ChamadoService', () => {
         expect(solicitanteService.findSolicitanteOrCreate).toBeCalled();
         expect(chamadoTIRepository.createChamadoTI).toBeCalled();
         expect(chamadoRepository.createChamado).toBeCalled();
+        expect(chamadoGateway.broadcastChamados).toBeCalled();
         expect(result).toEqual(chamado);
       });
 
