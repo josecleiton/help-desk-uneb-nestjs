@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue, Job } from 'bull';
 import { emailQueueConfig } from './email.queue.config';
-import { QueuePriority } from '../queue-priority.enum';
+import { QueuePriority } from '../util/queue-priority.enum';
 import { EmailJob } from './email-job.interface.dto';
 
 @Injectable()

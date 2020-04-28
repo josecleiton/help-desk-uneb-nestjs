@@ -1,4 +1,7 @@
-import { StatusChanger, StatusGraph } from 'src/status-changer.interface';
+import {
+  StatusChanger,
+  StatusGraph,
+} from '../../util/status-changer.interface';
 
 export enum AlteracaoStatus {
   ABERTO = 'aberto',

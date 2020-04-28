@@ -230,7 +230,9 @@ export class ChamadoService {
       chamado.user = userToAttach;
       chamado.setor = setor || chamado.setor;
       await transaction.manager.save(chamado);
-      const userToAttachMsg = user ? ` Usuário ${userToAttach.username}` : '';
+      const userToAttachMsg = userToAttach
+        ? ` Usuário ${userToAttach.username}`
+        : '';
       createAlteracaoDto.descricao =
         createAlteracaoDto.descricao ||
         `Chamado ${chamado.id} transferido para o setor ${setor.id}.${userToAttachMsg}`;
@@ -247,7 +249,6 @@ export class ChamadoService {
       return chamado;
     } catch (err) {
       this.logger.error(err);
-      throw err;
       await transaction.rollback();
       const isUserFault =
         err instanceof NotFoundException || err instanceof ForbiddenException;

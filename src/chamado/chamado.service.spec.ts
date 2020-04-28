@@ -1,4 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { mocked } from 'ts-jest/utils';
+import { paginate } from 'nestjs-typeorm-paginate';
+
 import { ChamadoService } from './chamado.service';
 import { ChamadoRepository } from './chamado.repository';
 import { ChamadoTIRepository } from './chamado-ti.repository';
@@ -8,16 +11,12 @@ import { QueryRunnerFactory } from '../util/query-runner.factory';
 import {
   NotFoundException,
   InternalServerErrorException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { AlteracaoService } from './alteracao/alteracao.service';
 import { ChamadoGateway } from './chamado.gateway';
 
-import { mocked } from 'ts-jest/utils';
-
-import { paginate } from 'nestjs-typeorm-paginate';
-
 jest.mock('nestjs-typeorm-paginate');
-
 const mockPaginate = mocked(paginate, true);
 
 const mockChamadoRepository = () => ({
@@ -148,14 +147,14 @@ describe('ChamadoService', () => {
       chamado = { alteracoes: [] };
       solicitante = {};
       alteracao = {};
-      queryRunnerFactory.createRunnerAndBeginTransaction.mockResolvedValue(
-        transaction,
-      );
       transaction = {
         commit: jest.fn(),
         rollback: jest.fn(),
         release: jest.fn(),
       };
+      queryRunnerFactory.createRunnerAndBeginTransaction.mockResolvedValue(
+        transaction,
+      );
       transaction.release.mockResolvedValue(null);
       setorService.getSetorByID.mockResolvedValue(setor);
       solicitanteService.findSolicitanteOrCreate.mockResolvedValue(solicitante);
@@ -167,6 +166,77 @@ describe('ChamadoService', () => {
         setorId: 1,
         solicitante: {},
       };
+    });
+
+    describe('transferChamado', () => {
+      let mockUser;
+      beforeEach(() => {
+        transaction.manager = {
+          findOne: jest.fn(),
+          save: jest.fn(),
+        };
+        mockUser = { username: 'testUser' };
+        chamadoGateway.broadcastChamados.mockResolvedValue(null);
+      });
+
+      it('should be defined', () => {
+        expect(transaction.manager).toBeDefined();
+        expect(mockUser).toBeDefined();
+      });
+
+      it('succesfully transfer chamado', async () => {
+        const mockDto = {
+          transferido: { setorId: 1, userId: 1 },
+        };
+        transaction.manager.findOne.mockResolvedValue(chamado);
+        const result = await chamadoService.transferChamado(
+          1,
+          mockDto,
+          mockUser,
+        );
+        expect(queryRunnerFactory.createRunnerAndBeginTransaction).toBeCalled();
+        expect(transaction.manager.findOne).toBeCalled();
+        expect(setorService.getSetorByID).toBeCalled();
+        expect(transaction.manager.save).toBeCalled();
+        expect(alteracaoService.createAlteracao).toBeCalled();
+        expect(transaction.commit).toBeCalled();
+        expect(chamadoGateway.broadcastChamados).toBeCalled();
+        expect(result).toEqual(chamado);
+      });
+
+      it('throw 404 as chamado not found', () => {
+        const mockChamado = {
+          ti: true,
+        };
+        transaction.manager.findOne.mockResolvedValue(null);
+        transaction.rollback.mockResolvedValue(null);
+        expect(
+          chamadoService.transferChamado(1, mockChamado, mockUser),
+        ).rejects.toThrow(NotFoundException);
+      });
+
+      it('throw 403 as chamado ti should not be transfered', () => {
+        const mockChamado = {
+          ti: true,
+        };
+        transaction.manager.findOne.mockResolvedValue(mockChamado);
+        transaction.rollback.mockResolvedValue(null);
+        expect(
+          chamadoService.transferChamado(1, mockChamado, mockUser),
+        ).rejects.toThrow(ForbiddenException);
+        expect(queryRunnerFactory.createRunnerAndBeginTransaction).toBeCalled();
+      });
+
+      it('throw 500 as something weird occurs', () => {
+        const mockDto = {
+          transferido: { setorId: 1, userId: 1 },
+        };
+        transaction.manager.findOne.mockResolvedValue(chamado);
+        transaction.manager.save.mockRejectedValue(new Error('databaseFails'));
+        expect(
+          chamadoService.transferChamado(1, mockDto, mockUser),
+        ).rejects.toThrow(InternalServerErrorException);
+      });
     });
 
     it('should be deifned', () => {
@@ -230,7 +300,6 @@ describe('ChamadoService', () => {
         expect(chamadoService.createChamado(mockDto)).rejects.toThrow(
           InternalServerErrorException,
         );
-        expect(transaction.commit).not.toBeCalled();
         expect(queryRunnerFactory.createRunnerAndBeginTransaction).toBeCalled();
       });
     });
@@ -279,6 +348,43 @@ describe('ChamadoService', () => {
         NotFoundException,
       );
       expect(chamadoRepository.findOne).toBeCalled();
+    });
+  });
+
+  describe('cancelChamadoSituacao', () => {
+    const id = value;
+    let mockChamado;
+    let mockSolicitante;
+
+    beforeEach(() => {
+      mockChamado = { id, alteracoes: [] };
+      mockSolicitante = { cpf: 'testCpf' };
+    });
+
+    it('should be defined', () => {
+      expect(mockChamado).toBeDefined();
+      expect(mockSolicitante).toBeDefined();
+    });
+
+    it('succesfully cancel chamado', async () => {
+      const mockAlteracao = { id };
+      chamadoRepository.findOne.mockResolvedValue(mockChamado);
+      alteracaoService.createAlteracao.mockResolvedValue(mockAlteracao);
+      chamadoGateway.broadcastChamados.mockResolvedValue(null);
+      const result = await chamadoService.cancelChamadoSituacao(
+        id,
+        mockSolicitante,
+      );
+      mockChamado.alteracoes.push(mockAlteracao);
+      expect(chamadoGateway.broadcastChamados).toBeCalled();
+      expect(result).toEqual(mockChamado);
+    });
+
+    it('throw 404 as chamado not found', () => {
+      chamadoRepository.findOne.mockResolvedValue(null);
+      expect(
+        chamadoService.getChamadoById(id, mockSolicitante),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 });
