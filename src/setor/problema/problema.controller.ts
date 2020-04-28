@@ -12,6 +12,8 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
+
 import { ProblemaService } from './problema.service';
 import { Problema } from './problema.entity';
 import { GetProblemasDto } from './dto/get-problemas.dto';
@@ -20,22 +22,27 @@ import { Manager } from '../../auth/manager.model';
 import { CreateProblemaDto } from './dto/create-problema.dto';
 import { UpdateProblemaDto } from './dto/update-problema.dto';
 
-@Controller('setor/:setor_id/problema')
+const mainRoute = 'problema';
+const setorIdParam = 'setor_id';
+@Controller(`setor/:${setorIdParam}/${mainRoute}`)
+@ApiTags(mainRoute)
 export class ProblemaController {
   constructor(private problemaService: ProblemaService) {}
 
   @Get()
+  @ApiOperation({ description: 'Consulta todos os Problemas de um Setor' })
   getAll(
-    @Param('setor_id', ParseIntPipe) setorId: number,
+    @Param(setorIdParam, ParseIntPipe) setorId: number,
     @Query(ValidationPipe) getProblemasDto: GetProblemasDto,
   ): Promise<Problema[]> {
     return this.problemaService.getProblemas(setorId, getProblemasDto);
   }
 
-  @UseGuards(AuthGuard())
   @Post()
+  @ApiOperation({ description: 'Cria Problema em Setor' })
+  @UseGuards(AuthGuard())
   create(
-    @Param('setor_id', ParseIntPipe) setorId: number,
+    @Param(setorIdParam, ParseIntPipe) setorId: number,
     @Body(ValidationPipe) createProblemaDto: CreateProblemaDto,
     @GetManager() manager: Manager,
   ): Promise<Problema> {
@@ -46,10 +53,11 @@ export class ProblemaController {
     );
   }
 
-  @UseGuards(AuthGuard())
   @Put('/:id')
+  @ApiOperation({ description: 'Atualiza Problema em Setor' })
+  @UseGuards(AuthGuard())
   update(
-    @Param('setor_id', ParseIntPipe) setorId: number,
+    @Param(setorIdParam, ParseIntPipe) setorId: number,
     @Param('id', ParseIntPipe) id: number,
     @Body(ValidationPipe) updateProblemaDto: UpdateProblemaDto,
     @GetManager() manager: Manager,
@@ -62,10 +70,11 @@ export class ProblemaController {
     );
   }
 
-  @UseGuards(AuthGuard())
   @Delete('/:id')
+  @ApiOperation({ description: 'Deleta Problema em Setor' })
+  @UseGuards(AuthGuard())
   delete(
-    @Param('setor_id', ParseIntPipe) setorId: number,
+    @Param(setorIdParam, ParseIntPipe) setorId: number,
     @Param('id', ParseIntPipe) id: number,
     @GetManager() manager: Manager,
   ): Promise<void> {

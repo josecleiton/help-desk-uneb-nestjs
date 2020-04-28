@@ -1,10 +1,10 @@
-export interface StatusChanger<T> {
+export interface IStatusChanger<T> {
   change(
     oldStatus: T,
     newStatus: T,
   ): void | Promise<void> | boolean | Promise<boolean>;
 }
 
-export interface StatusGraph {
+export interface IStatusGraph {
   [key: string]: { [key: string]: boolean };
 }

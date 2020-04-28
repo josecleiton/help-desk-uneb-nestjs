@@ -1,3 +1,3 @@
-export interface PersistedFile {
+export interface IPersistedFile {
   url: string;
 }

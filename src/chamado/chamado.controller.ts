@@ -13,7 +13,12 @@ import {
   ClassSerializerInterceptor,
   Query,
 } from '@nestjs/common';
-import { ApiHeader, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiHeader,
+  ApiBearerAuth,
+  ApiTags,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { ChamadoService } from './chamado.service';
@@ -29,14 +34,17 @@ import { CreateAlteracaoDto } from './alteracao/dto/create-alteracao.dto';
 import { AlteracaoStatus } from './alteracao/alteracao.status';
 import { GetChamadosDto } from './dto/get-chamados.dto';
 
-@Controller('chamado')
+const mainRoute = 'chamado';
+@Controller(mainRoute)
 @UseInterceptors(ClassSerializerInterceptor)
+@ApiTags(mainRoute)
 export class ChamadoController {
   constructor(private chamadoService: ChamadoService) {}
 
   @Get()
-  @UseGuards(AuthGuard())
   @ApiBearerAuth()
+  @ApiOperation({ description: 'Consulta todos os Chamados de um Técnico' })
+  @UseGuards(AuthGuard())
   getAllByUser(
     @Query(ValidationPipe) getChamadosByUserDto: GetChamadosDto,
     @GetUser() user: User,
@@ -45,6 +53,7 @@ export class ChamadoController {
   }
 
   @Get('solicitante')
+  @ApiOperation({ description: 'Consulta todos os Chamados de um Solicitante' })
   @UseGuards(SolicitanteGuard)
   getAll(
     @GetSolicitante() solicitante: Solicitante,
@@ -57,7 +66,8 @@ export class ChamadoController {
   }
 
   @Post()
-  create(
+  @ApiOperation({ description: 'Cria Chamado' })
+  async create(
     @Body(ValidationPipe) createChamadoDto: CreateChamadoDto,
   ): Promise<Chamado> {
     return this.chamadoService.createChamado(createChamadoDto);
@@ -65,8 +75,9 @@ export class ChamadoController {
 
   @Get('solicitante/:id')
   @ApiHeader(solicitanteAuthHeaderSwagger)
-  @UseGuards(SolicitanteGuard)
   @ApiBearerAuth()
+  @ApiOperation({ description: 'Consulta um Chamado de um Solicitante' })
+  @UseGuards(SolicitanteGuard)
   getById(
     @Param('id', ParseIntPipe) id: number,
     @GetSolicitante() solicitante: Solicitante,
@@ -75,8 +86,9 @@ export class ChamadoController {
   }
 
   @Put(':id/situacao')
-  @UseGuards(AuthGuard())
   @ApiBearerAuth()
+  @ApiOperation({ description: 'Altera a Situação de um Chamado' })
+  @UseGuards(AuthGuard())
   updateSituacao(
     @Param('id', ParseIntPipe) id: number,
     @GetUser() user: User,
@@ -90,6 +102,7 @@ export class ChamadoController {
 
   @Delete(':id')
   @ApiHeader(solicitanteAuthHeaderSwagger)
+  @ApiOperation({ description: 'Altera a Situação do Chamado para CANCELADO' })
   @UseGuards(SolicitanteGuard)
   delete(
     @Param('id', ParseIntPipe) id: number,

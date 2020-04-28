@@ -8,7 +8,7 @@ import {
   ValidateIf,
   IsDefined,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { AlteracaoStatus } from '../alteracao.status';
 import { AlteracaoPriority } from '../alteracao-priority.enum';
@@ -29,7 +29,10 @@ export class CreateAlteracaoDto {
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ description: 'Descrição da alteração', type: String })
+  @ApiPropertyOptional({
+    description: 'Descrição da alteração',
+    type: String,
+  })
   descricao?: string;
 
   @IsEnum(AlteracaoStatus)
@@ -42,7 +45,7 @@ export class CreateAlteracaoDto {
 
   @IsOptional()
   @IsEnum(AlteracaoPriority)
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: `Prioridade da Alteração (se for a última alteração,
     será usada como prioridade do chamado)`,
     type: String,

@@ -1,4 +1,4 @@
-export interface MultipartFile {
+export interface IMultipartFile {
   fieldname: string;
   originalname: string;
   enconding: string;

@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './user.repository';
 import { SignUpDto } from './dto/signup.dto';
 import { SignInDto } from './dto/signin.dto';
-import { JwtPayload } from './jwt-payload.interface';
+import { IJwtPayload } from './jwt-payload.interface';
 import { Manager } from './manager.model';
 import { SignUpAdminDto } from './dto/signup-admin.dto';
 import { UserRoles } from './user-roles.enum';
@@ -38,7 +38,7 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('invalid password');
     }
-    const payload: JwtPayload = { username: user.username, nome: user.nome };
+    const payload: IJwtPayload = { username: user.username, nome: user.nome };
     const accessToken = this.jwtService.sign(payload);
     return { accessToken };
   }

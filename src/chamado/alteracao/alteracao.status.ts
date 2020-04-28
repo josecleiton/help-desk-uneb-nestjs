@@ -1,6 +1,6 @@
 import {
-  StatusChanger,
-  StatusGraph,
+  IStatusChanger,
+  IStatusGraph,
 } from '../../util/status-changer.interface';
 
 export enum AlteracaoStatus {
@@ -12,8 +12,8 @@ export enum AlteracaoStatus {
   CONCLUIDO = 'concluido',
 }
 
-export class AlteracaoStatusChanger implements StatusChanger<AlteracaoStatus> {
-  private readonly stateGraph: StatusGraph = {
+export class AlteracaoStatusChanger implements IStatusChanger<AlteracaoStatus> {
+  private readonly stateGraph: IStatusGraph = {
     [AlteracaoStatus.ABERTO]: {
       [AlteracaoStatus.EM_ATENDIMENTO]: true,
       [AlteracaoStatus.TRANSFERIDO]: true,
@@ -38,6 +38,8 @@ export class AlteracaoStatusChanger implements StatusChanger<AlteracaoStatus> {
   }
 }
 
+export const defaultAlteracaoStatusSubject = 'Chamado Atualizado';
+
 export class AlteracaoStatusSubject {
   private statusSubjectMap = {
     [AlteracaoStatus.ABERTO]: 'Chamado Criado!',
@@ -49,6 +51,6 @@ export class AlteracaoStatusSubject {
       return null;
     }
     const subject = this.statusSubjectMap[status];
-    return subject || 'Chamado Atualizado';
+    return subject || defaultAlteracaoStatusSubject;
   }
 }

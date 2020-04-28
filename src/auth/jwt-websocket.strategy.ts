@@ -4,7 +4,7 @@ import { Strategy, ExtractJwt } from 'passport-jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './user.repository';
 import { jwtQueryParameterWebSocket, jwtSecretKey } from './auth.constants';
-import { JwtPayload } from './jwt-payload.interface';
+import { IJwtPayload } from './jwt-payload.interface';
 import { User } from './user.entity';
 import { WsException } from '@nestjs/websockets';
 
@@ -29,7 +29,7 @@ export class JwtWebSocketStrategy extends PassportStrategy(
     });
   }
 
-  async validate(payload: JwtPayload): Promise<User> {
+  async validate(payload: IJwtPayload): Promise<User> {
     const { username } = payload;
     const user = await this.userRepository.findOne({ username });
     if (!user) {

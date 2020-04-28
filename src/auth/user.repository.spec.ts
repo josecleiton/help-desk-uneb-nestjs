@@ -3,10 +3,14 @@ import {
   ConflictException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import * as bcrypt from 'bcryptjs';
+import { hashSync } from 'bcryptjs';
 
 import { UserRepository } from './user.repository';
 import { User } from './user.entity';
+import { mocked } from 'ts-jest/utils';
+
+jest.mock('bcryptjs');
+const mockedHashSync = mocked(hashSync);
 
 const mockCredentials = {
   username: 'test',
@@ -86,13 +90,12 @@ describe('UserRepository', () => {
     describe('hashPassword', () => {
       it('calls bcrypt.hash to generate a hash', async () => {
         const mockHash = 'testHash';
-        bcrypt.hashSync = jest.fn().mockResolvedValue(mockHash);
+        mockedHashSync.mockImplementation(() => mockHash);
         userRepository.findOne.mockResolvedValue(user);
-        expect(bcrypt.hashSync).not.toHaveBeenCalled();
         const result = await userRepository.hashPassword(
           mockCredentials.password,
         );
-        expect(bcrypt.hashSync).toHaveBeenCalledWith(mockCredentials.password);
+        expect(mockedHashSync).toBeCalledWith(mockCredentials.password);
         expect(result).toEqual(mockHash);
       });
     });

@@ -8,7 +8,7 @@ import {
   Length,
 } from 'class-validator';
 import { SignInDto } from './signin.dto';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { nomeMinLength, nomeMaxLength } from '../user.constants';
 import { UserRoles } from '../user-roles.enum';
 import { telefoneMinLength, emailMinLength } from '../../app.constants';
@@ -36,7 +36,7 @@ export class SignUpDto extends SignInDto {
   @IsOptional()
   @IsString()
   @MinLength(telefoneMinLength)
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Telefone do Usuário',
     minLength: telefoneMinLength,
     type: String,

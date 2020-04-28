@@ -11,7 +11,7 @@ import {
   telefoneMaxLength,
 } from '../../app.constants';
 import { cpfLength } from '../solicitante.constants';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateSolicitanteDto {
   @IsString()
@@ -36,9 +36,8 @@ export class CreateSolicitanteDto {
   @IsOptional()
   @IsString()
   @Length(telefoneMinLength, telefoneMaxLength)
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Telefone do Solicitante',
-    required: false,
     minLength: telefoneMinLength,
     maxLength: telefoneMaxLength,
   })

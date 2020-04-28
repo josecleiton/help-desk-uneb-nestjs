@@ -15,14 +15,14 @@ export class ChamadoTI extends BaseEntity {
   @Column()
   software: string;
 
-  @Column()
+  @Column({ nullable: true })
   dataUtilizacao: Date;
 
   @Column({ type: 'text', nullable: true })
   link: string;
 
-  @Column({ type: 'text', nullable: true })
-  plugins: string;
+  @Column({ type: 'varchar', array: true, nullable: true })
+  plugins: string[];
 
   @OneToOne(() => Chamado)
   chamado: Chamado;

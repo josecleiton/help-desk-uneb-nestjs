@@ -5,17 +5,25 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UploadService } from './upload.service';
-import { MultipartFile } from './multipart-file.interface';
-import { PersistedFile } from './persisted-file.interface';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
-@Controller('upload')
+import { UploadService } from './upload.service';
+import { IMultipartFile } from './multipart-file.interface';
+import { IPersistedFile } from './persisted-file.interface';
+import { ApiFile } from './api-file.decorator';
+
+const mainRoute = 'upload';
+@Controller(mainRoute)
+@ApiTags(mainRoute)
 export class UploadController {
+  private readonly fileField = 'file';
   constructor(private uploadService: UploadService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('file'))
-  upload(@UploadedFile() file: MultipartFile): PersistedFile {
+  @ApiOperation({ description: 'Upload arquivo' })
+  @ApiFile(this.fileField)
+  @UseInterceptors(FileInterceptor(this.fileField))
+  upload(@UploadedFile() file: IMultipartFile): IPersistedFile {
     return this.uploadService.save(file);
   }
 }

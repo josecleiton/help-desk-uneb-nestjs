@@ -4,25 +4,45 @@ import {
   IsDate,
   IsUrl,
   IsOptional,
+  IsArray,
+  ArrayNotEmpty,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateChamadoTIDto {
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ description: 'Software a ser requerido', type: String })
+  @ApiProperty({
+    description: 'Software a ser requerido',
+    type: String,
+    minimum: 1,
+  })
   software: string;
 
   @IsDate()
-  @ApiProperty({ description: 'Data de utilização do equipamento', type: Date })
-  dataUtilizacao: Date;
+  @IsOptional()
+  @ApiPropertyOptional({
+    description: 'Data de utilização do equipamento',
+    type: Date,
+  })
+  dataUtilizacao?: Date;
 
   @IsUrl()
-  @ApiProperty({ description: 'Link do Software em questão', type: String })
-  link: string;
+  @IsOptional()
+  @ApiPropertyOptional({
+    description: 'Link do Software em questão',
+    type: String,
+  })
+  link?: string;
 
   @IsOptional()
-  @IsString()
-  @ApiProperty({ description: 'Plugins do software em questão', type: String })
-  plugins?: string;
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
+  @ApiPropertyOptional({
+    description: 'Plugins do software em questão',
+    type: [String],
+  })
+  plugins?: string[];
 }

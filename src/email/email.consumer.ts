@@ -9,7 +9,7 @@ import { Job } from 'bull';
 import { Logger } from '@nestjs/common';
 
 import { emailQueueConfig } from './email.queue.config';
-import { EmailJob } from './email-job.interface.dto';
+import { IEmailJob } from './email-job.interface.dto';
 import { emailConfig, emailFrom } from '../config/email.config';
 import { TemplateEmailCompiler } from './template/template.compiler';
 
@@ -32,7 +32,7 @@ export class EmailConsumer {
   }
 
   @Process()
-  async sendEmail(job: Job<EmailJob>): Promise<void> {
+  async sendEmail(job: Job<IEmailJob>): Promise<void> {
     this.logger.log('Job started');
     const { data } = job;
     const html = this.templateCompiler.compileEmail(data);

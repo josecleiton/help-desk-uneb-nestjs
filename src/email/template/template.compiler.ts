@@ -2,7 +2,7 @@ import * as path from 'path';
 import hbs from './hbs.config';
 import { Injectable, Logger } from '@nestjs/common';
 import { readFileSync } from 'fs';
-import { EmailJob } from '../email-job.interface.dto';
+import { IEmailJob } from '../email-job.interface.dto';
 
 @Injectable()
 export class TemplateCompiler {
@@ -35,7 +35,7 @@ export class TemplateEmailCompiler extends TemplateCompiler {
     this.basePath = path.join(this.basePath, 'emails');
   }
 
-  compileEmail(data: EmailJob, text?: boolean): string {
+  compileEmail(data: IEmailJob, text?: boolean): string {
     const vars = { ...data.vars, person: data.person };
     return super.compile(data.view, vars, text);
   }

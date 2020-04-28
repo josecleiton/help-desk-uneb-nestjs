@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { Test } from '@nestjs/testing';
 import { JwtStrategy } from './jwt.strategy';
 import { UserRepository } from './user.repository';
-import { JwtPayload } from './jwt-payload.interface';
+import { IJwtPayload } from './jwt-payload.interface';
 import { UnauthorizedException } from '@nestjs/common';
 import { User } from './user.entity';
 
@@ -28,7 +28,7 @@ describe('JwtStrategy', () => {
     it('validate and return the user', async () => {
       const user = { username: 'testuser' } as User;
       userRepository.findOne.mockResolvedValue(user);
-      const payload = { username: user.username } as JwtPayload;
+      const payload = { username: user.username } as IJwtPayload;
       const result = await jwtStrategy.validate(payload);
       expect(userRepository.findOne).toHaveBeenCalledWith(payload);
       expect(result).toEqual(user);
@@ -36,7 +36,7 @@ describe('JwtStrategy', () => {
 
     it('unauthorized exception', () => {
       userRepository.findOne.mockResolvedValue(null);
-      const payload = { username: 'testuser' } as JwtPayload;
+      const payload = { username: 'testuser' } as IJwtPayload;
       expect(jwtStrategy.validate(payload)).rejects.toThrow(
         UnauthorizedException,
       );

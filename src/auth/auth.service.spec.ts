@@ -4,7 +4,7 @@ import { UserRepository } from './user.repository';
 import { JwtService } from '@nestjs/jwt';
 import { SetorService } from '../setor/setor.service';
 import { UserRoles } from './user-roles.enum';
-import { JwtPayload } from './jwt-payload.interface';
+import { IJwtPayload } from './jwt-payload.interface';
 import { UnauthorizedException } from '@nestjs/common';
 
 const mockUserRepository = () => ({
@@ -85,7 +85,7 @@ describe('AuthService', () => {
 
   describe('signin', () => {
     it('signin succesfully', async () => {
-      const mockPayload: JwtPayload = {
+      const mockPayload: IJwtPayload = {
         username: mockUser.username,
         nome: mockUser.nome,
       };

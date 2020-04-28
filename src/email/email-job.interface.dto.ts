@@ -1,6 +1,6 @@
 import { EmailPersonDto } from './dto/email-person.dto';
 
-export interface EmailJob {
+export interface IEmailJob {
   person: EmailPersonDto;
   view: string;
   subject: string;

@@ -1,6 +1,6 @@
-import { EmailViews } from './email-views.interface';
+import { IEmailViews } from './email-views.interface';
 
-export const emailViews: EmailViews = {
+export const emailViews: IEmailViews = {
   alertSolicitante: {
     view: 'update-state-chamado',
     subject: 'Um assunto',

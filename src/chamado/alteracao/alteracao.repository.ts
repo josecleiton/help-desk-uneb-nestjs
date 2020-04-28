@@ -1,10 +1,11 @@
 import { Repository, EntityRepository } from 'typeorm';
+import { ForbiddenException } from '@nestjs/common';
+
 import { Alteracao } from './alteracao.entity';
 import { CreateAlteracaoDto } from './dto/create-alteracao.dto';
 import { Chamado } from '../chamado.entity';
 import { QueryRunnerTransaction } from '../../util/query-runner.factory';
-import { ForbiddenException } from '@nestjs/common';
-import { User } from 'src/auth/user.entity';
+import { User } from '../../auth/user.entity';
 
 @EntityRepository(Alteracao)
 export class AlteracaoRepository extends Repository<Alteracao> {

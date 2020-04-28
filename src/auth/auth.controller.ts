@@ -7,6 +7,8 @@ import {
   Logger,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
+
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/signin.dto';
 import { SignUpDto } from './dto/signup.dto';
@@ -15,13 +17,16 @@ import { SignUpAdminDto } from './dto/signup-admin.dto';
 import { Manager } from './manager.model';
 import { Admin } from './admin.model';
 
-@Controller('auth')
+const mainRoute = 'auth';
+@Controller(mainRoute)
+@ApiTags(mainRoute)
 export class AuthController {
   private logger = new Logger('AuthController');
   constructor(private authService: AuthService) {}
 
   @UseGuards(AuthGuard())
   @Post('/signup')
+  @ApiOperation({ description: 'Criar Técnico' })
   async signUp(
     @Body(ValidationPipe) signUpDto: SignUpDto,
     @GetManager() manager: Manager,
@@ -31,6 +36,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard())
   @Post('/signup/admin')
+  @ApiOperation({ description: 'Criar Admin' })
   async signUpAdmin(
     @Body(ValidationPipe) signUpAdminDto: SignUpAdminDto,
     @GetAdmin() admin: Admin,
@@ -42,6 +48,7 @@ export class AuthController {
   }
 
   @Post('/signin')
+  @ApiOperation({ description: 'Logar' })
   async signIn(
     @Body(ValidationPipe) signInDto: SignInDto,
   ): Promise<{ accessToken: string }> {
