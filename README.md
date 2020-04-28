@@ -2,7 +2,7 @@
 
 # Description
 
-Help Desk REST API to Departamento de Ciências Exatas e da Terra on [Universidade do Estado da Bahia](https://www.uneb.br)
+Help Desk REST API to Science and Math Department (DCET) on [Universidade do Estado da Bahia](https://www.uneb.br)
 
 ## Docs
 
@@ -45,6 +45,8 @@ $ docker-compose up
 # unit tests
 $ docker exec -it hdu-api npm run test
 ```
+
+#### Upcoming: end to end tests
 
 ## Stay in touch
 
