@@ -26,9 +26,11 @@ export class AlteracaoRepository extends Repository<Alteracao> {
         );
       }
     }
+    const { descricao, prioridade, situacao } = createAlteracaoDto;
     const alteracao = this.create();
-    delete createAlteracaoDto.transferido;
-    Object.assign(alteracao, createAlteracaoDto);
+    alteracao.descricao = descricao;
+    alteracao.prioridade = prioridade;
+    alteracao.situacao = situacao;
     alteracao.chamado = chamado;
     alteracao.user = user;
     alteracao.data = new Date();

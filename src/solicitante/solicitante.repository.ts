@@ -9,8 +9,11 @@ export class SolicitanteRepository extends Repository<Solicitante> {
     createSolicitanteDto: CreateSolicitanteDto,
     transaction?: QueryRunnerTransaction,
   ): Promise<Solicitante> {
+    const { cpf, email, telefone } = createSolicitanteDto;
     const solicitante = this.create();
-    Object.assign(solicitante, createSolicitanteDto);
+    solicitante.cpf = cpf;
+    solicitante.email = email;
+    solicitante.telefone = telefone || null;
     if (transaction) {
       await transaction.manager.save(solicitante);
     } else {

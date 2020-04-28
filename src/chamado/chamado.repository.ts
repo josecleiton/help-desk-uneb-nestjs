@@ -18,8 +18,11 @@ export class ChamadoRepository extends Repository<Chamado> {
     chamadoTI?: ChamadoTI,
     transaction?: QueryRunnerTransaction,
   ) {
+    const { descricao, sala, tombo } = createChamadoDto;
     const chamado = this.create();
-    Object.assign(chamado, createChamadoDto);
+    chamado.descricao = descricao;
+    chamado.sala = sala;
+    chamado.tombo = tombo;
     chamado.solicitante = getValueAsPromise<Solicitante>(solicitante);
     chamado.setor = setor;
     chamado.problema = problema || null;
@@ -29,8 +32,8 @@ export class ChamadoRepository extends Repository<Chamado> {
     } else {
       await chamado.save();
     }
-    delete chamado.setor.problemas;
     chamado.alteracoes = [];
+    delete chamado.setor.problemas;
     return chamado;
   }
 

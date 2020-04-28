@@ -25,6 +25,12 @@ export class Chamado extends BaseEntity {
   @Column({ type: 'text' })
   descricao: string;
 
+  @Column({ nullable: true })
+  sala: string;
+
+  @Column({ nullable: true })
+  tombo: string;
+
   @Column()
   solicitanteId: number;
 

@@ -9,8 +9,12 @@ export class ChamadoTIRepository extends Repository<ChamadoTI> {
     createChamadoTIDto: CreateChamadoTIDto,
     transaction?: QueryRunnerTransaction,
   ): Promise<ChamadoTI> {
+    const { dataUtilizacao, link, plugins, software } = createChamadoTIDto;
     const chamadoTI = this.create();
-    Object.assign(chamadoTI, createChamadoTIDto);
+    chamadoTI.dataUtilizacao = dataUtilizacao;
+    chamadoTI.link = link;
+    chamadoTI.plugins = plugins;
+    chamadoTI.software = software;
     if (transaction) {
       await transaction.manager.save(chamadoTI);
     } else {

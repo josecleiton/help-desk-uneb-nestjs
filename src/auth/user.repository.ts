@@ -8,17 +8,21 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { SignInDto } from './dto/signin.dto';
-import { typeOrmCodeErrors } from '../app.constants';
 import { Setor } from '../setor/setor.entity';
+import { typeOrmCodeErrors } from '../app.constants';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
   private logger = new Logger('UserRepository');
 
   async signUp(signUpDto: SignUpDto, setor: Setor = null): Promise<void> {
-    const { password } = signUpDto;
+    const { cargo, email, nome, telefone, username, password } = signUpDto;
     const user = this.create();
-    Object.assign(user, signUpDto);
+    user.cargo = cargo;
+    user.email = email;
+    user.nome = nome;
+    user.telefone = telefone;
+    user.username = username;
     user.setor = setor;
     user.password = await this.hashPassword(password);
     try {
