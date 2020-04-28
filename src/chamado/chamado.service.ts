@@ -3,7 +3,6 @@ import {
   NotFoundException,
   Logger,
   InternalServerErrorException,
-  BadRequestException,
   ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -214,11 +213,6 @@ export class ChamadoService {
     user: User,
   ): Promise<Chamado> {
     const { transferido } = createAlteracaoDto;
-    if (!transferido) {
-      throw new BadRequestException(
-        'O objeto transferido na requisição é requirido',
-      );
-    }
     const transaction = await this.queryRunnerFactory.createRunnerAndBeginTransaction();
     try {
       const chamado = await this.getById(id, transaction);
