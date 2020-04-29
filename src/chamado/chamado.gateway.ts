@@ -82,21 +82,24 @@ export class ChamadoGateway implements OnGatewayInit, OnGatewayDisconnect {
       return;
     }
     const clients = wsChannel.getAll();
-    for (let idx = 0; idx < clients.length; ++idx) {
-      const {
-        id: clientId,
-        data: { dto, user },
-      } = clients[idx];
-      const chamados = await this.chamadoService.getChamadoByUser(user, dto);
-      try {
-        this.server.to(clientId).emit(channelId, chamados);
-      } catch (err) {
-        this.logger.warn(
-          `Falhou em enviar mensagem para ${
-            user.username
-          }. Client id: ${clientId}. ${JSON.stringify(err)}`,
-        );
-      }
-    }
+    await Promise.all(
+      clients.map(async ({ id: clientId, data: { dto, user } }) => {
+        try {
+          const chamados = await this.chamadoService.getChamadoByUser(
+            user,
+            dto,
+          );
+          return this.server.to(clientId).emit(channelId, chamados);
+        } catch (err) {
+          this.logger.warn(
+            `Falhou em enviar mensagem para ${
+              user.username
+            }. Client id: ${clientId}. ${JSON.stringify(err)}`,
+          );
+        }
+      }),
+    ).catch(err => {
+      this.logger.error(err);
+    });
   }
 }
