@@ -1,19 +1,10 @@
-import {
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  Entity,
-  OneToMany,
-} from 'typeorm';
+import { Column, ManyToOne, Entity, OneToMany } from 'typeorm';
 import { BaseEntity } from '../../util/base.entity';
 import { Setor } from '../setor.entity';
 import { Chamado } from '../../chamado/chamado.entity';
 
 @Entity()
 export class Problema extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   @Column({ type: 'text' })
   descricao: string;
 

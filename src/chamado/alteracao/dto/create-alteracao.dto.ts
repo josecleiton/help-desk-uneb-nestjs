@@ -7,11 +7,13 @@ import {
   ValidateNested,
   ValidateIf,
   IsDefined,
+  MaxLength,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { AlteracaoStatus } from '../alteracao.status';
 import { AlteracaoPriority } from '../alteracao-priority.enum';
+import { maxTextFieldLength } from '../../../app.constants';
 
 class CreateAlteracaoTransferidoDto {
   @ValidateIf(({ setorId, userId }) => !userId || setorId)
@@ -29,9 +31,11 @@ export class CreateAlteracaoDto {
   @IsOptional()
   @IsString()
   @IsNotEmpty()
+  @MaxLength(maxTextFieldLength)
   @ApiPropertyOptional({
     description: 'Descrição da alteração',
     type: String,
+    maxLength: maxTextFieldLength,
   })
   descricao?: string;
 

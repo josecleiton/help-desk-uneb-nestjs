@@ -1,7 +1,11 @@
-import { IsNotEmpty, MinLength } from 'class-validator';
+import { IsNotEmpty, MinLength, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { nomeMinLength } from '../setor.constants';
-import { emailMinLength, telefoneMinLength } from '../../app.constants';
+import {
+  emailMinLength,
+  telefoneMinLength,
+  telefoneMaxLength,
+} from '../../app.constants';
 
 export class CreateSetorDto {
   @IsNotEmpty()
@@ -14,7 +18,7 @@ export class CreateSetorDto {
   nome: string;
 
   @IsNotEmpty()
-  @MinLength(telefoneMinLength)
+  @Length(telefoneMinLength, telefoneMaxLength)
   @ApiProperty({
     description: 'Telefone do Setor',
     minLength: telefoneMinLength,

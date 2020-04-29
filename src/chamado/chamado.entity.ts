@@ -1,7 +1,6 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -19,9 +18,6 @@ import { AlteracaoPriority } from './alteracao/alteracao-priority.enum';
 
 @Entity()
 export class Chamado extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   @Column({ type: 'text' })
   descricao: string;
 

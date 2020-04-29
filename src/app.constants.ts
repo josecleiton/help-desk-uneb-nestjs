@@ -7,6 +7,7 @@ export const typeOrmCodeErrors = {
 export const telefoneMaxLength = 12;
 export const telefoneMinLength = 8;
 export const emailMinLength = 5;
+export const maxTextFieldLength = 2048;
 
 export const appName = 'Help Desk API';
 export const appDescription =

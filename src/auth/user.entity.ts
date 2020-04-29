@@ -1,11 +1,5 @@
 import * as bcrypt from 'bcryptjs';
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  OneToMany,
-} from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { BaseEntity } from '../util/base.entity';
 import { UserRoles } from './user-roles.enum';
@@ -15,9 +9,6 @@ import { Alteracao } from '../chamado/alteracao/alteracao.entity';
 
 @Entity()
 export class User extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   @Column()
   nome: string;
 

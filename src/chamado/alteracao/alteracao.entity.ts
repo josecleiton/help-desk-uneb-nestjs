@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, Column, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../../util/base.entity';
 import { Chamado } from '../chamado.entity';
 import { User } from '../../auth/user.entity';
@@ -8,9 +8,6 @@ import { Exclude, Expose } from 'class-transformer';
 
 @Entity()
 export class Alteracao extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   @Column()
   data: Date;
 

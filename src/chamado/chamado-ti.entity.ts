@@ -1,12 +1,9 @@
-import { Column, PrimaryGeneratedColumn, Entity, OneToOne } from 'typeorm';
+import { Column, Entity, OneToOne } from 'typeorm';
 import { BaseEntity } from '../util/base.entity';
 import { Chamado } from './chamado.entity';
 
 @Entity()
 export class ChamadoTI extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   @Column()
   software: string;
 

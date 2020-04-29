@@ -21,6 +21,7 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { Pagination } from 'nestjs-typeorm-paginate';
+
 import { ChamadoService } from './chamado.service';
 import { CreateChamadoDto } from './dto/create-chamado.dto';
 import { SolicitanteGuard } from '../solicitante/solicitante.guard';
@@ -42,17 +43,6 @@ export class ChamadoController {
   constructor(private chamadoService: ChamadoService) {}
 
   @Get()
-  @ApiBearerAuth()
-  @ApiOperation({ description: 'Consulta todos os Chamados de um Técnico' })
-  @UseGuards(AuthGuard())
-  getAllByUser(
-    @Query(ValidationPipe) getChamadosByUserDto: GetChamadosDto,
-    @GetUser() user: User,
-  ): Promise<Pagination<Chamado>> {
-    return this.chamadoService.getChamadoByUser(user, getChamadosByUserDto);
-  }
-
-  @Get('solicitante')
   @ApiOperation({ description: 'Consulta todos os Chamados de um Solicitante' })
   @UseGuards(SolicitanteGuard)
   getAll(
@@ -65,6 +55,17 @@ export class ChamadoController {
     );
   }
 
+  @Get('user')
+  @ApiBearerAuth()
+  @ApiOperation({ description: 'Consulta todos os Chamados de um Técnico' })
+  @UseGuards(AuthGuard())
+  getAllByUser(
+    @Query(ValidationPipe) getChamadosByUserDto: GetChamadosDto,
+    @GetUser() user: User,
+  ): Promise<Pagination<Chamado>> {
+    return this.chamadoService.getChamadoByUser(user, getChamadosByUserDto);
+  }
+
   @Post()
   @ApiOperation({ description: 'Cria Chamado' })
   async create(
@@ -73,7 +74,7 @@ export class ChamadoController {
     return this.chamadoService.createChamado(createChamadoDto);
   }
 
-  @Get('solicitante/:id')
+  @Get(':id')
   @ApiHeader(solicitanteAuthHeaderSwagger)
   @ApiBearerAuth()
   @ApiOperation({ description: 'Consulta um Chamado de um Solicitante' })

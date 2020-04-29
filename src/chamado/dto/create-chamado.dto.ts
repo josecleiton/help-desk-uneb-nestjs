@@ -7,18 +7,23 @@ import {
   ValidateNested,
   IsDefined,
   IsNumber,
+  MaxLength,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
 import { tomboMinLength, tomboMaxLength } from '../chamado.constants';
 import { CreateChamadoTIDto } from './create-chamado-ti.dto';
+import { maxTextFieldLength } from '../../app.constants';
 export class CreateChamadoDto {
   @IsString()
   @IsNotEmpty()
+  @MaxLength(maxTextFieldLength)
   @ApiProperty({
     description: 'Descrição do Chamado',
     type: String,
     minLength: 1,
+    maxLength: maxTextFieldLength,
   })
   descricao: string;
 
