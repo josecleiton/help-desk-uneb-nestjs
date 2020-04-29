@@ -10,6 +10,7 @@ import {
   Put,
   Delete,
   ValidationPipe,
+  HttpCode,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
@@ -17,6 +18,7 @@ import {
   ApiOperation,
   ApiOkResponse,
   ApiNotFoundResponse,
+  ApiCreatedResponse,
 } from '@nestjs/swagger';
 
 import { ProblemaService } from './problema.service';
@@ -45,9 +47,10 @@ export class ProblemaController {
   }
 
   @Post()
+  @HttpCode(201)
   @UseGuards(AuthGuard())
   @ApiOperation({ description: 'Cria Problema em Setor' })
-  @ApiOkResponse({ description: 'Problema criado', type: Problema })
+  @ApiCreatedResponse({ description: 'Problema criado', type: Problema })
   create(
     @Param(setorIdParam, ParseIntPipe) setorId: number,
     @Body(ValidationPipe) createProblemaDto: CreateProblemaDto,

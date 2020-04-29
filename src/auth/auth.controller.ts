@@ -5,6 +5,7 @@ import {
   ValidationPipe,
   UseGuards,
   Logger,
+  HttpCode,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
@@ -33,6 +34,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard())
   @Post('/cadastrar')
+  @HttpCode(201)
   @ApiOperation({ description: 'Criar Técnico' })
   @ApiCreatedResponse()
   async signUp(
@@ -44,6 +46,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard())
   @Post('/cadastrar/admin')
+  @HttpCode(201)
   @ApiOperation({ description: 'Criar Admin' })
   @ApiBearerAuth()
   @ApiCreatedResponse()

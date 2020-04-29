@@ -12,6 +12,7 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
   Query,
+  HttpCode,
 } from '@nestjs/common';
 import {
   ApiHeader,
@@ -46,11 +47,11 @@ export class ChamadoController {
   constructor(private chamadoService: ChamadoService) {}
 
   @Get()
+  @UseGuards(SolicitanteGuard)
   @ApiOperation({ description: 'Consulta todos os Chamados de um Solicitante' })
   @ApiOkResponse({
     description: 'Lista de Chamados',
   })
-  @UseGuards(SolicitanteGuard)
   getAll(
     @GetSolicitante() solicitante: Solicitante,
     @Query(ValidationPipe) getChamadosDto: GetChamadosDto,
@@ -62,12 +63,12 @@ export class ChamadoController {
   }
 
   @Get('user')
+  @UseGuards(AuthGuard())
   @ApiBearerAuth()
   @ApiOperation({ description: 'Consulta todos os Chamados de um Técnico' })
   @ApiOkResponse({
     description: 'Lista de Chamados',
   })
-  @UseGuards(AuthGuard())
   getAllByUser(
     @Query(ValidationPipe) getChamadosByUserDto: GetChamadosDto,
     @GetUser() user: User,
@@ -76,6 +77,7 @@ export class ChamadoController {
   }
 
   @Post()
+  @HttpCode(201)
   @ApiOperation({ description: 'Cria Chamado' })
   @ApiCreatedResponse({ description: 'Chamado criado', type: Chamado })
   async create(
@@ -85,12 +87,12 @@ export class ChamadoController {
   }
 
   @Get(':id')
+  @UseGuards(SolicitanteGuard)
   @ApiHeader(solicitanteAuthHeaderSwagger)
   @ApiBearerAuth()
   @ApiOperation({ description: 'Consulta um Chamado de um Solicitante' })
   @ApiOkResponse({ type: Chamado })
   @ApiNotFoundResponse()
-  @UseGuards(SolicitanteGuard)
   getById(
     @Param('id', ParseIntPipe) id: number,
     @GetSolicitante() solicitante: Solicitante,
@@ -99,11 +101,11 @@ export class ChamadoController {
   }
 
   @Put(':id/situacao')
+  @UseGuards(AuthGuard())
   @ApiBearerAuth()
   @ApiOperation({ description: 'Altera a Situação de um Chamado' })
   @ApiOkResponse({ type: Chamado })
   @ApiNotFoundResponse()
-  @UseGuards(AuthGuard())
   updateSituacao(
     @Param('id', ParseIntPipe) id: number,
     @GetUser() user: User,
@@ -116,11 +118,11 @@ export class ChamadoController {
   }
 
   @Delete(':id')
+  @UseGuards(SolicitanteGuard)
   @ApiHeader(solicitanteAuthHeaderSwagger)
   @ApiOperation({ description: 'Altera a Situação do Chamado para CANCELADO' })
   @ApiOkResponse({ type: Chamado })
   @ApiNotFoundResponse()
-  @UseGuards(SolicitanteGuard)
   delete(
     @Param('id', ParseIntPipe) id: number,
     @GetSolicitante() solicitante: Solicitante,

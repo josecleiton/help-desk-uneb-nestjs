@@ -9,6 +9,7 @@ import {
   Put,
   Delete,
   UseGuards,
+  HttpCode,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
@@ -42,6 +43,7 @@ export class SetorController {
   @Get('/:id')
   @UseGuards(AuthGuard())
   @ApiOperation({ description: 'Consulta um Setor' })
+  @ApiOkResponse({ type: Setor })
   @ApiNotFoundResponse()
   getSetorById(
     @Param('id', ParseIntPipe) id: number,
@@ -52,7 +54,9 @@ export class SetorController {
 
   @Post()
   @UseGuards(AuthGuard())
+  @HttpCode(201)
   @ApiOperation({ description: 'Cria Setor' })
+  @ApiOkResponse({ description: 'Setor criado', type: Setor })
   createSetor(
     @Body(ValidationPipe) createSetorDto: CreateSetorDto,
     @GetAdmin() admin: Admin,
@@ -63,6 +67,7 @@ export class SetorController {
   @Put('/:id')
   @UseGuards(AuthGuard())
   @ApiOperation({ description: 'Atualiza Setor' })
+  @ApiOkResponse({ type: Setor })
   @ApiNotFoundResponse()
   updateSetor(
     @Param('id', ParseIntPipe) id: number,
@@ -75,6 +80,7 @@ export class SetorController {
   @Delete('/:id')
   @UseGuards(AuthGuard())
   @ApiOperation({ description: 'Remove Setor' })
+  @ApiOkResponse({ type: Setor })
   @ApiNotFoundResponse()
   deleteSetor(
     @Param('id', ParseIntPipe) id: number,
