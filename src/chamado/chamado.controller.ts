@@ -51,6 +51,7 @@ export class ChamadoController {
   @ApiOperation({ description: 'Consulta todos os Chamados de um Solicitante' })
   @ApiOkResponse({
     description: 'Lista de Chamados',
+    type: Pagination,
   })
   getAll(
     @GetSolicitante() solicitante: Solicitante,
@@ -68,6 +69,7 @@ export class ChamadoController {
   @ApiOperation({ description: 'Consulta todos os Chamados de um Técnico' })
   @ApiOkResponse({
     description: 'Lista de Chamados',
+    type: Pagination,
   })
   getAllByUser(
     @Query(ValidationPipe) getChamadosByUserDto: GetChamadosDto,
