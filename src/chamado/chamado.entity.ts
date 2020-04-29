@@ -1,6 +1,5 @@
 import {
   Entity,
-  BaseEntity,
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
@@ -8,6 +7,7 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
+import { BaseEntity } from '../util/base.entity';
 import { Setor } from '../setor/setor.entity';
 import { Problema } from '../setor/problema/problema.entity';
 import { User } from '../auth/user.entity';

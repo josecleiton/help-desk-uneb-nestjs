@@ -1,10 +1,5 @@
-import {
-  BaseEntity,
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { BaseEntity } from '../../util/base.entity';
 import { Chamado } from '../chamado.entity';
 import { User } from '../../auth/user.entity';
 import { AlteracaoStatus, AlteracaoStatusChanger } from './alteracao.status';

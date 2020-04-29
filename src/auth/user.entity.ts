@@ -1,17 +1,17 @@
+import * as bcrypt from 'bcryptjs';
 import {
   Entity,
-  BaseEntity,
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import * as bcrypt from 'bcryptjs';
+import { Exclude } from 'class-transformer';
+import { BaseEntity } from '../util/base.entity';
 import { UserRoles } from './user-roles.enum';
 import { Setor } from '../setor/setor.entity';
 import { Chamado } from '../chamado/chamado.entity';
 import { Alteracao } from '../chamado/alteracao/alteracao.entity';
-import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User extends BaseEntity {

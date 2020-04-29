@@ -1,11 +1,11 @@
 import {
-  BaseEntity,
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
   Entity,
   OneToMany,
 } from 'typeorm';
+import { BaseEntity } from '../../util/base.entity';
 import { Setor } from '../setor.entity';
 import { Chamado } from '../../chamado/chamado.entity';
 

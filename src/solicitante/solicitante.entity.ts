@@ -1,10 +1,5 @@
-import {
-  BaseEntity,
-  Column,
-  PrimaryGeneratedColumn,
-  Entity,
-  OneToMany,
-} from 'typeorm';
+import { Column, PrimaryGeneratedColumn, Entity, OneToMany } from 'typeorm';
+import { BaseEntity } from '../util/base.entity';
 import { Chamado } from '../chamado/chamado.entity';
 
 @Entity()
