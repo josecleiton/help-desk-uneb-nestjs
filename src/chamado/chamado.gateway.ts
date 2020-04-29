@@ -98,8 +98,6 @@ export class ChamadoGateway implements OnGatewayInit, OnGatewayDisconnect {
           );
         }
       }),
-    ).catch(err => {
-      this.logger.error(err);
-    });
+    );
   }
 }
