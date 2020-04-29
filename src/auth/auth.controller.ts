@@ -7,7 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/signin.dto';
@@ -37,6 +37,7 @@ export class AuthController {
   @UseGuards(AuthGuard())
   @Post('/signup/admin')
   @ApiOperation({ description: 'Criar Admin' })
+  @ApiBearerAuth()
   async signUpAdmin(
     @Body(ValidationPipe) signUpAdminDto: SignUpAdminDto,
     @GetAdmin() admin: Admin,
