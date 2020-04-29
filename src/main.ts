@@ -46,6 +46,7 @@ async function bootstrap() {
   }
   await app.listen(PORT || defaultPort);
   logger.log(`App escutando a porta :${PORT}`);
+  logger.log(`App rodando em: ${await app.getUrl()}`);
 }
 
 bootstrap();
