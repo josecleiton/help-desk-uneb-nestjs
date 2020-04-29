@@ -11,7 +11,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiOkResponse,
+  ApiNotFoundResponse,
+} from '@nestjs/swagger';
 
 import { SetorService } from './setor.service';
 import { Setor } from './setor.entity';
@@ -29,13 +34,15 @@ export class SetorController {
 
   @Get()
   @ApiOperation({ description: 'Consulta todos os Setores' })
+  @ApiOkResponse({ description: 'Setores', type: [Setor] })
   getSetors(): Promise<Setor[]> {
     return this.setorService.getSetors();
   }
 
   @Get('/:id')
-  @ApiOperation({ description: 'Consulta um Setor' })
   @UseGuards(AuthGuard())
+  @ApiOperation({ description: 'Consulta um Setor' })
+  @ApiNotFoundResponse()
   getSetorById(
     @Param('id', ParseIntPipe) id: number,
     @GetManager() manager: Manager,
@@ -44,8 +51,8 @@ export class SetorController {
   }
 
   @Post()
-  @ApiOperation({ description: 'Cria Setor' })
   @UseGuards(AuthGuard())
+  @ApiOperation({ description: 'Cria Setor' })
   createSetor(
     @Body(ValidationPipe) createSetorDto: CreateSetorDto,
     @GetAdmin() admin: Admin,
@@ -54,8 +61,9 @@ export class SetorController {
   }
 
   @Put('/:id')
-  @ApiOperation({ description: 'Atualiza Setor' })
   @UseGuards(AuthGuard())
+  @ApiOperation({ description: 'Atualiza Setor' })
+  @ApiNotFoundResponse()
   updateSetor(
     @Param('id', ParseIntPipe) id: number,
     @Body(ValidationPipe) updateSetorDto: UpdateSetorDto,
@@ -67,6 +75,7 @@ export class SetorController {
   @Delete('/:id')
   @UseGuards(AuthGuard())
   @ApiOperation({ description: 'Remove Setor' })
+  @ApiNotFoundResponse()
   deleteSetor(
     @Param('id', ParseIntPipe) id: number,
     @GetAdmin() admin: Admin,

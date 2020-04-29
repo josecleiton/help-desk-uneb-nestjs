@@ -12,7 +12,12 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiOkResponse,
+  ApiNotFoundResponse,
+} from '@nestjs/swagger';
 
 import { ProblemaService } from './problema.service';
 import { Problema } from './problema.entity';
@@ -31,6 +36,7 @@ export class ProblemaController {
 
   @Get()
   @ApiOperation({ description: 'Consulta todos os Problemas de um Setor' })
+  @ApiOkResponse({ description: 'Problemas', type: [Problema] })
   getAll(
     @Param(setorIdParam, ParseIntPipe) setorId: number,
     @Query(ValidationPipe) getProblemasDto: GetProblemasDto,
@@ -39,8 +45,9 @@ export class ProblemaController {
   }
 
   @Post()
-  @ApiOperation({ description: 'Cria Problema em Setor' })
   @UseGuards(AuthGuard())
+  @ApiOperation({ description: 'Cria Problema em Setor' })
+  @ApiOkResponse({ description: 'Problema criado', type: Problema })
   create(
     @Param(setorIdParam, ParseIntPipe) setorId: number,
     @Body(ValidationPipe) createProblemaDto: CreateProblemaDto,
@@ -54,8 +61,10 @@ export class ProblemaController {
   }
 
   @Put('/:id')
-  @ApiOperation({ description: 'Atualiza Problema em Setor' })
   @UseGuards(AuthGuard())
+  @ApiOperation({ description: 'Atualiza Problema em Setor' })
+  @ApiOkResponse({ description: 'Problema atualizado', type: Problema })
+  @ApiNotFoundResponse()
   update(
     @Param(setorIdParam, ParseIntPipe) setorId: number,
     @Param('id', ParseIntPipe) id: number,
@@ -71,8 +80,10 @@ export class ProblemaController {
   }
 
   @Delete('/:id')
-  @ApiOperation({ description: 'Deleta Problema em Setor' })
   @UseGuards(AuthGuard())
+  @ApiOperation({ description: 'Deleta Problema em Setor' })
+  @ApiOkResponse()
+  @ApiNotFoundResponse()
   delete(
     @Param(setorIdParam, ParseIntPipe) setorId: number,
     @Param('id', ParseIntPipe) id: number,

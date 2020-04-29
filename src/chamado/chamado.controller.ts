@@ -18,6 +18,9 @@ import {
   ApiBearerAuth,
   ApiTags,
   ApiOperation,
+  ApiOkResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { Pagination } from 'nestjs-typeorm-paginate';
@@ -44,6 +47,9 @@ export class ChamadoController {
 
   @Get()
   @ApiOperation({ description: 'Consulta todos os Chamados de um Solicitante' })
+  @ApiOkResponse({
+    description: 'Lista de Chamados',
+  })
   @UseGuards(SolicitanteGuard)
   getAll(
     @GetSolicitante() solicitante: Solicitante,
@@ -58,6 +64,9 @@ export class ChamadoController {
   @Get('user')
   @ApiBearerAuth()
   @ApiOperation({ description: 'Consulta todos os Chamados de um Técnico' })
+  @ApiOkResponse({
+    description: 'Lista de Chamados',
+  })
   @UseGuards(AuthGuard())
   getAllByUser(
     @Query(ValidationPipe) getChamadosByUserDto: GetChamadosDto,
@@ -68,6 +77,7 @@ export class ChamadoController {
 
   @Post()
   @ApiOperation({ description: 'Cria Chamado' })
+  @ApiCreatedResponse({ description: 'Chamado criado', type: Chamado })
   async create(
     @Body(ValidationPipe) createChamadoDto: CreateChamadoDto,
   ): Promise<Chamado> {
@@ -78,6 +88,8 @@ export class ChamadoController {
   @ApiHeader(solicitanteAuthHeaderSwagger)
   @ApiBearerAuth()
   @ApiOperation({ description: 'Consulta um Chamado de um Solicitante' })
+  @ApiOkResponse({ type: Chamado })
+  @ApiNotFoundResponse()
   @UseGuards(SolicitanteGuard)
   getById(
     @Param('id', ParseIntPipe) id: number,
@@ -89,12 +101,14 @@ export class ChamadoController {
   @Put(':id/situacao')
   @ApiBearerAuth()
   @ApiOperation({ description: 'Altera a Situação de um Chamado' })
+  @ApiOkResponse({ type: Chamado })
+  @ApiNotFoundResponse()
   @UseGuards(AuthGuard())
   updateSituacao(
     @Param('id', ParseIntPipe) id: number,
     @GetUser() user: User,
     @Body(ValidationPipe) createAlteracaoDto: CreateAlteracaoDto,
-  ) {
+  ): Promise<Chamado> {
     const { situacao } = createAlteracaoDto;
     return situacao !== AlteracaoStatus.TRANSFERIDO
       ? this.chamadoService.updateChamadoSituacao(id, createAlteracaoDto, user)
@@ -104,6 +118,8 @@ export class ChamadoController {
   @Delete(':id')
   @ApiHeader(solicitanteAuthHeaderSwagger)
   @ApiOperation({ description: 'Altera a Situação do Chamado para CANCELADO' })
+  @ApiOkResponse({ type: Chamado })
+  @ApiNotFoundResponse()
   @UseGuards(SolicitanteGuard)
   delete(
     @Param('id', ParseIntPipe) id: number,

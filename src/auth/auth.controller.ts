@@ -7,7 +7,13 @@ import {
   Logger,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+} from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/signin.dto';
@@ -16,6 +22,7 @@ import { GetManager, GetAdmin } from './get-user.decorator';
 import { SignUpAdminDto } from './dto/signup-admin.dto';
 import { Manager } from './manager.model';
 import { Admin } from './admin.model';
+import { AccessTokenDto } from './dto/access-token.dto';
 
 const mainRoute = 'auth';
 @Controller(mainRoute)
@@ -25,8 +32,9 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @UseGuards(AuthGuard())
-  @Post('/signup')
+  @Post('/cadastrar')
   @ApiOperation({ description: 'Criar Técnico' })
+  @ApiCreatedResponse()
   async signUp(
     @Body(ValidationPipe) signUpDto: SignUpDto,
     @GetManager() manager: Manager,
@@ -35,9 +43,10 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard())
-  @Post('/signup/admin')
+  @Post('/cadastrar/admin')
   @ApiOperation({ description: 'Criar Admin' })
   @ApiBearerAuth()
+  @ApiCreatedResponse()
   async signUpAdmin(
     @Body(ValidationPipe) signUpAdminDto: SignUpAdminDto,
     @GetAdmin() admin: Admin,
@@ -48,11 +57,12 @@ export class AuthController {
     return this.authService.signupAdmin(signUpAdminDto);
   }
 
-  @Post('/signin')
+  @Post('/login')
   @ApiOperation({ description: 'Logar' })
+  @ApiOkResponse({ description: 'Token de Acesso JWT', type: AccessTokenDto })
   async signIn(
     @Body(ValidationPipe) signInDto: SignInDto,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<AccessTokenDto> {
     return this.authService.signin(signInDto);
   }
 }

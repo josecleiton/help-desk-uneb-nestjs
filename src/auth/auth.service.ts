@@ -9,6 +9,7 @@ import { Manager } from './manager.model';
 import { SignUpAdminDto } from './dto/signup-admin.dto';
 import { UserRoles } from './user-roles.enum';
 import { SetorService } from '../setor/setor.service';
+import { AccessTokenDto } from './dto/access-token.dto';
 
 @Injectable()
 export class AuthService {
@@ -33,13 +34,13 @@ export class AuthService {
     return this.userRepository.signUp({ ...signUpDto, cargo: UserRoles.Admin });
   }
 
-  async signin(signInDto: SignInDto): Promise<{ accessToken: string }> {
+  async signin(signInDto: SignInDto): Promise<AccessTokenDto> {
     const user = await this.userRepository.validateUserPassword(signInDto);
     if (!user) {
       throw new UnauthorizedException('invalid password');
     }
     const payload: IJwtPayload = { username: user.username, nome: user.nome };
-    const accessToken = this.jwtService.sign(payload);
-    return { accessToken };
+    const token = this.jwtService.sign(payload);
+    return { token };
   }
 }
