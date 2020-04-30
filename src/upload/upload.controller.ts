@@ -6,7 +6,12 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiOperation, ApiCreatedResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiCreatedResponse,
+  ApiConsumes,
+} from '@nestjs/swagger';
 
 import { UploadService } from './upload.service';
 import { IMultipartFile } from './multipart-file.interface';
@@ -24,6 +29,7 @@ export class UploadController {
   @HttpCode(201)
   @UseInterceptors(FileInterceptor(this.fileField))
   @ApiOperation({ description: 'Upload arquivo' })
+  @ApiConsumes('multipart/form-data')
   @ApiFile(this.fileField)
   @ApiCreatedResponse({ type: PersistedFileDto })
   upload(@UploadedFile() file: IMultipartFile): PersistedFileDto {
