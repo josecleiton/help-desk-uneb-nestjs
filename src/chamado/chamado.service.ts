@@ -57,7 +57,7 @@ export class ChamadoService {
     getChamadosDto: GetChamadosDto,
     searchOptions: FindConditions<Chamado>,
   ): Promise<Pagination<Chamado>> {
-    const { page = 1, search } = getChamadosDto;
+    const { page = 1, search, route } = getChamadosDto;
     let { limit = maxChamadosPerPage } = getChamadosDto;
     limit = Math.min(limit, maxChamadosPerPage);
     if (search) {
@@ -65,7 +65,7 @@ export class ChamadoService {
     }
     return paginate<Chamado>(
       this.chamadoRepository,
-      { page, limit },
+      { page, limit, route },
       { where: { ...searchOptions } },
     );
   }

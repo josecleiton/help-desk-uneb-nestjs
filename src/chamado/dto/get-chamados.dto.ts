@@ -25,4 +25,12 @@ export class GetChamadosDto {
     type: String,
   })
   search?: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({
+    description: 'Gera a url para as páginas laterais',
+    type: String,
+  })
+  route?: string;
 }
