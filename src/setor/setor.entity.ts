@@ -1,19 +1,18 @@
-import { Column, Entity, Unique, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { BaseEntity } from '../util/base.entity';
 import { User } from '../auth/user.entity';
 import { Problema } from './problema/problema.entity';
 import { Chamado } from '../chamado/chamado.entity';
 
 @Entity()
-@Unique(['email'])
 export class Setor extends BaseEntity {
-  @Column()
+  @Column({ unique: true })
   nome: string;
 
   @Column()
   telefone: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @OneToMany(
