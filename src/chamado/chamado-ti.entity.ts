@@ -1,6 +1,5 @@
-import { Column, Entity, OneToOne } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { BaseEntity } from '../util/base.entity';
-import { Chamado } from './chamado.entity';
 
 @Entity()
 export class ChamadoTI extends BaseEntity {
@@ -15,7 +14,4 @@ export class ChamadoTI extends BaseEntity {
 
   @Column({ type: 'varchar', array: true, nullable: true })
   plugins: string[];
-
-  @OneToOne(() => Chamado)
-  chamado: Chamado;
 }

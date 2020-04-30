@@ -89,13 +89,13 @@ describe('AuthService', () => {
         username: mockUser.username,
         nome: mockUser.nome,
       };
-      const accessToken = 'testAccessToken';
+      const token = 'testAccessToken';
       userRepository.validateUserPassword.mockResolvedValue(mockUser);
-      jwtService.sign.mockReturnValue(accessToken);
+      jwtService.sign.mockReturnValue(token);
       const result = await authService.signin(mockSignDto);
       expect(userRepository.validateUserPassword).toBeCalledWith(mockSignDto);
       expect(jwtService.sign).toBeCalledWith(mockPayload);
-      expect(result).toEqual({ accessToken });
+      expect(result).toEqual({ token });
     });
 
     it('validateUserPassword return null then throws 401', () => {
