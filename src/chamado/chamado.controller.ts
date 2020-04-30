@@ -38,6 +38,11 @@ import { User } from '../auth/user.entity';
 import { CreateAlteracaoDto } from './alteracao/dto/create-alteracao.dto';
 import { AlteracaoStatus } from './alteracao/alteracao.status';
 import { GetChamadosDto } from './dto/get-chamados.dto';
+import { PaginationDto } from '../util/pagination.dto';
+
+class PaginationChamado extends PaginationDto {
+  items: Chamado[];
+}
 
 const mainRoute = 'chamado';
 @Controller(mainRoute)
@@ -51,7 +56,7 @@ export class ChamadoController {
   @ApiOperation({ description: 'Consulta todos os Chamados de um Solicitante' })
   @ApiOkResponse({
     description: 'Lista de Chamados',
-    type: Pagination,
+    type: PaginationChamado,
   })
   getAll(
     @GetSolicitante() solicitante: Solicitante,
@@ -69,7 +74,7 @@ export class ChamadoController {
   @ApiOperation({ description: 'Consulta todos os Chamados de um Técnico' })
   @ApiOkResponse({
     description: 'Lista de Chamados',
-    type: Pagination,
+    type: PaginationChamado,
   })
   getAllByUser(
     @Query(ValidationPipe) getChamadosByUserDto: GetChamadosDto,
