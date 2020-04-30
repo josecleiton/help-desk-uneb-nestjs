@@ -86,7 +86,11 @@ export class ChamadoService {
   }
 
   private async broadcastChamado(setorId: number): Promise<boolean> {
-    const queueOptions = { priority: QueuePriority.HIGH, attempts: 2, removeOnComplete: true };
+    const queueOptions = {
+      priority: QueuePriority.HIGH,
+      attempts: 2,
+      removeOnComplete: true,
+    };
     const job = await this.chamadoQueue.add(
       chamadoQueueEvents.broadcastChamados,
       setorId,

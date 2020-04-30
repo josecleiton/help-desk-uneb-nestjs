@@ -22,6 +22,7 @@ import {
   ApiOkResponse,
   ApiCreatedResponse,
   ApiNotFoundResponse,
+  ApiProperty,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { Pagination } from 'nestjs-typeorm-paginate';
@@ -41,6 +42,7 @@ import { GetChamadosDto } from './dto/get-chamados.dto';
 import { PaginationDto } from '../util/pagination.dto';
 
 class PaginationChamado extends PaginationDto {
+  @ApiProperty({ description: 'Lista de Chamados', type: [Chamado] })
   items: Chamado[];
 }
 

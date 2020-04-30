@@ -1,6 +1,6 @@
-import { CacheModuleOptions } from "@nestjs/common";
+import { CacheModuleOptions } from '@nestjs/common';
 
-export const cacheConfig : CacheModuleOptions = {
+export const cacheConfig: CacheModuleOptions = {
   ttl: 5,
-  max: 10
-}
+  max: 10,
+};

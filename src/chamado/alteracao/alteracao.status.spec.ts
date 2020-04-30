@@ -1,4 +1,9 @@
-import { AlteracaoStatusChanger, AlteracaoStatus, AlteracaoStatusSubject, defaultAlteracaoStatusSubject } from './alteracao.status';
+import {
+  AlteracaoStatusChanger,
+  AlteracaoStatus,
+  AlteracaoStatusSubject,
+  defaultAlteracaoStatusSubject,
+} from './alteracao.status';
 
 describe('AlteracaoStatus', () => {
   describe('AlteracaoStatusChanger', () => {
@@ -259,39 +264,38 @@ describe('AlteracaoStatus', () => {
         });
       });
     });
-
   });
-    describe('alteracaoStatusSubject', () => {
-      let statusSubject: AlteracaoStatusSubject;
+  describe('alteracaoStatusSubject', () => {
+    let statusSubject: AlteracaoStatusSubject;
 
-      beforeEach(() => {
-        statusSubject = new AlteracaoStatusSubject()
-      })
+    beforeEach(() => {
+      statusSubject = new AlteracaoStatusSubject();
+    });
 
-      it('should be defined', () => {
-        expect(statusSubject).toBeDefined()
-      })
+    it('should be defined', () => {
+      expect(statusSubject).toBeDefined();
+    });
 
-      it('should return null as status CANCELADO', () => {
-        const result = statusSubject.getSubject(AlteracaoStatus.CANCELADO);
-        expect(result).toEqual(null)
-      })
+    it('should return null as status CANCELADO', () => {
+      const result = statusSubject.getSubject(AlteracaoStatus.CANCELADO);
+      expect(result).toEqual(null);
+    });
 
-      it('should return mapped subject to ABERTO', () => {
-        const result = statusSubject.getSubject(AlteracaoStatus.ABERTO);
-        expect(result).toBeDefined()
-        expect(result).not.toEqual(defaultAlteracaoStatusSubject);
-      })
+    it('should return mapped subject to ABERTO', () => {
+      const result = statusSubject.getSubject(AlteracaoStatus.ABERTO);
+      expect(result).toBeDefined();
+      expect(result).not.toEqual(defaultAlteracaoStatusSubject);
+    });
 
-      it('should return mapped subject to CONCLUIDO', () => {
-        const result = statusSubject.getSubject(AlteracaoStatus.CONCLUIDO);
-        expect(result).toBeDefined()
-        expect(result).not.toEqual(defaultAlteracaoStatusSubject);
-      })
+    it('should return mapped subject to CONCLUIDO', () => {
+      const result = statusSubject.getSubject(AlteracaoStatus.CONCLUIDO);
+      expect(result).toBeDefined();
+      expect(result).not.toEqual(defaultAlteracaoStatusSubject);
+    });
 
-      it('should return default subject as no mapped status has been passed', () => {
-        const result = statusSubject.getSubject(AlteracaoStatus.TRANSFERIDO);
-        expect(result).toEqual(defaultAlteracaoStatusSubject);
-      })
-    })
+    it('should return default subject as no mapped status has been passed', () => {
+      const result = statusSubject.getSubject(AlteracaoStatus.TRANSFERIDO);
+      expect(result).toEqual(defaultAlteracaoStatusSubject);
+    });
+  });
 });
