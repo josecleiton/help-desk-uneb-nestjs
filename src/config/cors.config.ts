@@ -2,11 +2,11 @@ import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.int
 
 type CallbackType = (err: Error, stat?: boolean) => void;
 
-const whiteList: string[] = [];
+const whiteList: string[] = ['http://localhost:3000'];
 
-if (process.env.NODE_ENV !== 'production') {
-  whiteList.push('http://localhost:3000');
-}
+// if (process.env.NODE_ENV !== 'production') {
+//   whiteList.push('http://localhost:3000');
+// }
 
 function origin(origin: string, callback: CallbackType) {
   if (!origin || whiteList.indexOf(origin) !== -1) {
