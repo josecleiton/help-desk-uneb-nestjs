@@ -26,7 +26,7 @@ Because the API will be used by brazilian developers on University. However, mos
    - etc
 - Docker (with `docker-compose`)
    - Platform compatibility
-   - Easy CI/CD
+   - Easy CI/CD using Heroku
 - PostgreSQL
 - Redis
 
